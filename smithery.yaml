@@ -27,3 +27,5 @@ capabilities:
   tools: true
   resources: false
   prompts: false
+config:
+  requires_api_key: false
