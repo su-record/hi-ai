@@ -186,9 +186,37 @@ server.setRequestHandler(CallToolRequestSchema, async (request, extra): Promise<
 
 async function main() {
   const transport = new StdioServerTransport();
+  
+  // Handle process termination gracefully
+  process.on('SIGINT', async () => {
+    await server.close();
+    process.exit(0);
+  });
+  
+  process.on('SIGTERM', async () => {
+    await server.close();
+    process.exit(0);
+  });
+  
+  // Handle EPIPE errors that occur with sidecar proxy
+  process.on('uncaughtException', (error) => {
+    if (error.message && error.message.includes('EPIPE')) {
+      // Gracefully handle EPIPE errors
+      console.error('Connection closed by client');
+      return;
+    }
+    console.error('Uncaught exception:', error);
+    process.exit(1);
+  });
+  
+  process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  });
+  
   await server.connect(transport);
 }
 
-main().catch(() => {
+main().catch((error) => {
+  console.error('Server initialization failed:', error);
   process.exit(1);
 });

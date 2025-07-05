@@ -8,8 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # 의존성 설치
-RUN npm ci --only=production && \
-    npm ci --only=development
+RUN npm ci
 
 # 소스 코드 복사
 COPY . .
@@ -41,7 +40,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # 프로덕션 의존성만 설치
-RUN npm ci --only=production && \
+RUN npm ci --production && \
     npm cache clean --force
 
 # 빌드된 파일 복사
