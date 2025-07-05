@@ -1,0 +1,25 @@
+name: "@su-record/hi-ai"
+description: "AI 어렵지 않아! '하이아이' 한마디로 시작하는 29개 도구의 완벽한 AI 개발 킷"
+version: "1.0.0"
+author: "Su"
+license: "MIT"
+categories:
+  - development
+  - ai-collaboration
+  - memory-management
+  - code-quality
+  - browser-automation
+  - sequential-thinking
+  - planning-tools
+  - productivity
+runtime: "typescript"
+env:
+  NODE_ENV: "production"
+homepage: "https://github.com/su-record/hi-ai"
+repository: "https://github.com/su-record/hi-ai"
+readme: "https://github.com/su-record/hi-ai/main/README.md"
+icon: "🤖"
+capabilities:
+  tools: true
+  resources: false
+  prompts: false
