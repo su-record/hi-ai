@@ -24,36 +24,24 @@ Hi-AI는 복잡한 명령어 암기나 설정 없이, "하이아이"라는 인�
 - **🌐 실제 브라우저 연동:** Puppeteer 기반의 실제 브라우저 제어로 정확한 웹 개발 및 테스트를 수행합니다.
 - **📏 코드 품질 관리:** 코드 복잡도 분석, 리팩토링 제안 등 품질 관리를 자동화합니다.
 
-## 📦 설치 (Installation)
+## 🚀 빠른 시작
 
-```bash
-# npm으로 전역 설치
-npm install -g @su-record/hi-ai
+### 1. 설치
 
-# 또는 Smithery로 설치 없이 바로 사용
-# https://smithery.ai/server/@su-record/hi-ai
+**🎯 가장 쉬운 방법 - Smithery 사용 (추천)**
 ```
-
-## 🚀 시작하기 (Getting Started)
-
-### 1. 설치 방법
-
-**🎯 가장 쉬운 방법 - Smithery 사용**
-
-- 이 링크로 바로 사용: [https://smithery.ai/server/@su-record/hi-ai](https://smithery.ai/server/@su-record/hi-ai)
-- 별도의 설치 과정이 필요 없습니다!
+https://smithery.ai/server/@su-record/hi-ai
+```
+별도의 설치 과정이 필요 없습니다!
 
 **📦 npm으로 직접 설치**
-
 ```bash
 npm install -g @su-record/hi-ai
 ```
 
-터미널에서 `hi-ai` 명령어를 사용할 수 있게 됩니다.
+### 2. MCP 에디터 설정
 
-### 2. MCP 에디터에 설정
-
-Claude Desktop, Cursor, Windsurf 등 MCP를 지원하는 에디터의 설정 파일에 다음 내용을 추가하세요.
+Claude Desktop, Cursor, Windsurf 등의 설정 파일에 추가:
 
 ```json
 {
@@ -65,16 +53,15 @@ Claude Desktop, Cursor, Windsurf 등 MCP를 지원하는 에디터의 설정 파
 }
 ```
 
-### 3. 인사하기
-
-이제 AI에게 말을 걸어보세요!
+### 3. 시작하기
 
 ```
-You: hi-ai (또는 하이아이)
+You: 하이아이
 AI: 준비됐어! 뭐 만들까?
 ```
 
 `안녕`, `hello`, `こんにちは`, `你好`, `hola`, `bonjour` 등 다양한 인사말에 응답합니다.
+
 
 ## 🛠️ 29개의 강력한 도구 (29 Powerful Tools)
 

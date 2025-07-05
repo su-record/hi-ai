@@ -93,14 +93,14 @@ async function loadGuides(): Promise<CodingGuide[]> {
 
 export const startSessionDefinition: ToolDefinition = {
   name: 'start_session',
-  description: 'Automatically load project context and previous session when starting conversation',
+  description: 'IMPORTANT: This tool should be automatically called when users greet with "하이아이", "hi-ai", "안녕", "hello", or similar greetings. It loads project context, previous memories, and restores the last session state to continue work seamlessly.',
   inputSchema: {
     type: 'object',
     properties: {
-      greeting: { type: 'string', description: 'Greeting message that triggered this action' },
-      loadMemory: { type: 'boolean', description: 'Load relevant project memories' },
-      loadGuides: { type: 'boolean', description: 'Load applicable coding guides' },
-      restoreContext: { type: 'boolean', description: 'Restore previous session context' }
+      greeting: { type: 'string', description: 'Greeting message that triggered this action (e.g., "하이아이", "hi-ai")' },
+      loadMemory: { type: 'boolean', description: 'Load relevant project memories (default: true)' },
+      loadGuides: { type: 'boolean', description: 'Load applicable coding guides (default: true)' },
+      restoreContext: { type: 'boolean', description: 'Restore previous session context (default: true)' }
     },
     required: []
   }

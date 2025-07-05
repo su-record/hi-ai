@@ -89,7 +89,7 @@ function createServer() {
   const server = new Server(
     {
       name: 'hi-ai',
-      version: '1.0.0',
+      version: '1.0.3',
     },
     {
       capabilities: {
@@ -228,7 +228,7 @@ async function main() {
 }
 
 // Only run main when not being imported by Smithery
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   main().catch((error) => {
     console.error('Server initialization failed:', error);
     process.exit(1);
