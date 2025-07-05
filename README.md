@@ -28,13 +28,24 @@ AI: 안녕! 뭐 도와줄까? 이전에 하던 작업도 기억하고 있어!
 # npm으로
 npm install -g @su-record/hi-ai
 
-# Smithery로
-# smithery.ai에서 "hi-ai" 검색
+# Smithery로 바로 사용
+# https://smithery.ai/server/@su-record/hi-ai
 ```
 
 ## 🚀 시작하기
 
-### 1. MCP 설정
+### 1. 설치 방법
+
+**🎯 가장 쉬운 방법 - Smithery 사용**
+- 바로 사용: https://smithery.ai/server/@su-record/hi-ai
+- 설치 필요 없음!
+
+**📦 npm으로 설치**
+```bash
+npm install -g @su-record/hi-ai
+```
+
+### 2. MCP 설정
 
 Claude Desktop, Cursor, Windsurf 등에서:
 
@@ -48,7 +59,7 @@ Claude Desktop, Cursor, Windsurf 등에서:
 }
 ```
 
-### 2. 인사하기
+### 3. 인사하기
 
 ```
 You: hi-ai (또는 하이아이)

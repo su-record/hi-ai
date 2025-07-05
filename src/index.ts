@@ -41,18 +41,6 @@ import { createUserStoriesDefinition, createUserStories } from './tools/planning
 import { analyzeRequirementsDefinition, analyzeRequirements } from './tools/planning/analyzeRequirements.js';
 import { featureRoadmapDefinition, featureRoadmap } from './tools/planning/featureRoadmap.js';
 
-const server = new Server(
-  {
-    name: 'hi-ai',
-    version: '1.0.0',
-  },
-  {
-    capabilities: {
-      tools: {},
-    },
-  }
-);
-
 // Collect all tool definitions
 const tools = [
   // Time Utility Tools
@@ -97,99 +85,117 @@ const tools = [
   featureRoadmapDefinition
 ];
 
-server.setRequestHandler(ListToolsRequestSchema, async () => {
-  return { tools };
-});
-
-server.setRequestHandler(CallToolRequestSchema, async (request, extra): Promise<CallToolResult> => {
-  const { name, arguments: args } = request.params;
-  
-  try {
-    switch (name) {
-      // Time Utility Tools
-      case 'get_current_time':
-        return await getCurrentTime(args as any) as CallToolResult;
-        
-      // Sequential Thinking Tools
-      case 'create_thinking_chain':
-        return await createThinkingChain(args as any) as CallToolResult;
-      case 'analyze_problem':
-        return await analyzeProblem(args as any) as CallToolResult;
-      case 'step_by_step_analysis':
-        return await stepByStepAnalysis(args as any) as CallToolResult;
-      case 'break_down_problem':
-        return await breakDownProblem(args as any) as CallToolResult;
-      case 'think_aloud_process':
-        return await thinkAloudProcess(args as any) as CallToolResult;
-      case 'format_as_plan':
-        return await formatAsPlan(args as any) as CallToolResult;
-        
-      // Browser Development Tools
-      case 'monitor_console_logs':
-        return await monitorConsoleLogs(args as any) as CallToolResult;
-      case 'inspect_network_requests':
-        return await inspectNetworkRequests(args as any) as CallToolResult;
-        
-      // Memory Management Tools
-      case 'save_memory':
-        return await saveMemory(args as any) as CallToolResult;
-      case 'recall_memory':
-        return await recallMemory(args as any) as CallToolResult;
-      case 'list_memories':
-        return await listMemories(args as any) as CallToolResult;
-      case 'delete_memory':
-        return await deleteMemory(args as any) as CallToolResult;
-      case 'search_memories':
-        return await searchMemoriesHandler(args as any) as CallToolResult;
-      case 'update_memory':
-        return await updateMemory(args as any) as CallToolResult;
-      case 'auto_save_context':
-        return await autoSaveContext(args as any) as CallToolResult;
-      case 'restore_session_context':
-        return await restoreSessionContext(args as any) as CallToolResult;
-      case 'prioritize_memory':
-        return await prioritizeMemory(args as any) as CallToolResult;
-      case 'start_session':
-        return await startSession(args as any) as CallToolResult;
-        
-      // Convention Tools
-      case 'get_coding_guide':
-        return await getCodingGuide(args as any) as CallToolResult;
-      case 'apply_quality_rules':
-        return await applyQualityRules(args as any) as CallToolResult;
-      case 'validate_code_quality':
-        return await validateCodeQuality(args as any) as CallToolResult;
-      case 'analyze_complexity':
-        return await analyzeComplexity(args as any) as CallToolResult;
-      case 'check_coupling_cohesion':
-        return await checkCouplingCohesion(args as any) as CallToolResult;
-      case 'suggest_improvements':
-        return await suggestImprovements(args as any) as CallToolResult;
-        
-      // Planning Tools
-      case 'generate_prd':
-        return await generatePrd(args as any) as CallToolResult;
-      case 'create_user_stories':
-        return await createUserStories(args as any) as CallToolResult;
-      case 'analyze_requirements':
-        return await analyzeRequirements(args as any) as CallToolResult;
-      case 'feature_roadmap':
-        return await featureRoadmap(args as any) as CallToolResult;
-        
-      default:
-        throw new McpError(ErrorCode.MethodNotFound, `Unknown tool: ${name}`);
+function createServer() {
+  const server = new Server(
+    {
+      name: 'hi-ai',
+      version: '1.0.0',
+    },
+    {
+      capabilities: {
+        tools: {},
+      },
     }
-  } catch (error) {
-    throw new McpError(ErrorCode.InternalError, `Error executing tool: ${error instanceof Error ? error.message : 'Unknown error'}`);
-  }
-});
+  );
 
-// Default export for Smithery platform
-export default function({ sessionId, config }: { sessionId: string; config: any }) {
+  server.setRequestHandler(ListToolsRequestSchema, async () => {
+    return { tools };
+  });
+
+  server.setRequestHandler(CallToolRequestSchema, async (request, extra): Promise<CallToolResult> => {
+    const { name, arguments: args } = request.params;
+    
+    try {
+      switch (name) {
+        // Time Utility Tools
+        case 'get_current_time':
+          return await getCurrentTime(args as any) as CallToolResult;
+          
+        // Sequential Thinking Tools
+        case 'create_thinking_chain':
+          return await createThinkingChain(args as any) as CallToolResult;
+        case 'analyze_problem':
+          return await analyzeProblem(args as any) as CallToolResult;
+        case 'step_by_step_analysis':
+          return await stepByStepAnalysis(args as any) as CallToolResult;
+        case 'break_down_problem':
+          return await breakDownProblem(args as any) as CallToolResult;
+        case 'think_aloud_process':
+          return await thinkAloudProcess(args as any) as CallToolResult;
+        case 'format_as_plan':
+          return await formatAsPlan(args as any) as CallToolResult;
+          
+        // Browser Development Tools
+        case 'monitor_console_logs':
+          return await monitorConsoleLogs(args as any) as CallToolResult;
+        case 'inspect_network_requests':
+          return await inspectNetworkRequests(args as any) as CallToolResult;
+          
+        // Memory Management Tools
+        case 'save_memory':
+          return await saveMemory(args as any) as CallToolResult;
+        case 'recall_memory':
+          return await recallMemory(args as any) as CallToolResult;
+        case 'list_memories':
+          return await listMemories(args as any) as CallToolResult;
+        case 'delete_memory':
+          return await deleteMemory(args as any) as CallToolResult;
+        case 'search_memories':
+          return await searchMemoriesHandler(args as any) as CallToolResult;
+        case 'update_memory':
+          return await updateMemory(args as any) as CallToolResult;
+        case 'auto_save_context':
+          return await autoSaveContext(args as any) as CallToolResult;
+        case 'restore_session_context':
+          return await restoreSessionContext(args as any) as CallToolResult;
+        case 'prioritize_memory':
+          return await prioritizeMemory(args as any) as CallToolResult;
+        case 'start_session':
+          return await startSession(args as any) as CallToolResult;
+          
+        // Convention Tools
+        case 'get_coding_guide':
+          return await getCodingGuide(args as any) as CallToolResult;
+        case 'apply_quality_rules':
+          return await applyQualityRules(args as any) as CallToolResult;
+        case 'validate_code_quality':
+          return await validateCodeQuality(args as any) as CallToolResult;
+        case 'analyze_complexity':
+          return await analyzeComplexity(args as any) as CallToolResult;
+        case 'check_coupling_cohesion':
+          return await checkCouplingCohesion(args as any) as CallToolResult;
+        case 'suggest_improvements':
+          return await suggestImprovements(args as any) as CallToolResult;
+          
+        // Planning Tools
+        case 'generate_prd':
+          return await generatePrd(args as any) as CallToolResult;
+        case 'create_user_stories':
+          return await createUserStories(args as any) as CallToolResult;
+        case 'analyze_requirements':
+          return await analyzeRequirements(args as any) as CallToolResult;
+        case 'feature_roadmap':
+          return await featureRoadmap(args as any) as CallToolResult;
+          
+        default:
+          throw new McpError(ErrorCode.MethodNotFound, `Unknown tool: ${name}`);
+      }
+    } catch (error) {
+      throw new McpError(ErrorCode.InternalError, `Error executing tool: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  });
+
   return server;
 }
 
+// Default export for Smithery platform
+export default function({ sessionId, config }: { sessionId: string; config: any }) {
+  // Return the configured server instance
+  return createServer();
+}
+
 async function main() {
+  const server = createServer();
   const transport = new StdioServerTransport();
   
   // Handle process termination gracefully
