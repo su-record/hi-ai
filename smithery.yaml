@@ -13,6 +13,7 @@ categories:
   - planning-tools
   - productivity
 runtime: "typescript"
+main: "src/index.ts"
 build:
   script: "npm run build"
   output: "dist/index.js"
