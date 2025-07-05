@@ -13,6 +13,9 @@ categories:
   - planning-tools
   - productivity
 runtime: "typescript"
+build:
+  script: "npm run build"
+  output: "dist/index.js"
 env:
   NODE_ENV: "production"
 homepage: "https://github.com/su-record/hi-ai"
