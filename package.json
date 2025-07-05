@@ -1,19 +1,22 @@
 {
   "name": "@su-record/hi-ai",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "AI 어렵지 않아! 하이아이 한마디로 시작하는 가장 쉬운 AI 개발 도구",
   "main": "dist/index.js",
   "module": "./src/index.ts",
   "type": "module",
   "bin": {
-    "hi-ai": "./dist/index.js"
+    "hi-ai": "dist/index.js"
   },
   "scripts": {
     "dev": "npm run build && node dist/index.js",
     "build": "tsc",
     "test": "echo \"No tests yet\""
   },
-  "keywords": ["mcp", "development"],
+  "keywords": [
+    "mcp",
+    "development"
+  ],
   "author": "Su",
   "license": "MIT",
   "dependencies": {
