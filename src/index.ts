@@ -184,6 +184,11 @@ server.setRequestHandler(CallToolRequestSchema, async (request, extra): Promise<
   }
 });
 
+// Default export for Smithery platform
+export default function({ sessionId, config }: { sessionId: string; config: any }) {
+  return server;
+}
+
 async function main() {
   const transport = new StdioServerTransport();
   
@@ -216,7 +221,10 @@ async function main() {
   await server.connect(transport);
 }
 
-main().catch((error) => {
-  console.error('Server initialization failed:', error);
-  process.exit(1);
-});
+// Only run main when not being imported by Smithery
+if (require.main === module) {
+  main().catch((error) => {
+    console.error('Server initialization failed:', error);
+    process.exit(1);
+  });
+}

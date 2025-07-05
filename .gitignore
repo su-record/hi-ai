@@ -19,3 +19,4 @@ guides/
 local-test-config.json
 test-*.js
 *.tmp
+.smithery/
