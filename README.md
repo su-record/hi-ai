@@ -36,11 +36,11 @@ Hi-AI는 Anthropic의 MCP(Model Context Protocol) 표준을 구현한 서버로,
 ### 시스템 아키텍처
 
 <p align="center">
-  <img src="docs/images/architecture.svg" alt="시스템 아키텍처" width="700">
+  <img src="docs/images/architecture.svg" alt="시스템 아키텍처" width="600">
 </p>
 
 ### 도구 카테고리 및 구성
-
+6
 | 카테고리 | 도구 수 | 주요 기능 |
 |----------|---------|-----------|
 | 🧠 사고 도구 | 6개 | 문제 분석, 단계별 분해, 사고 체인 생성 |
