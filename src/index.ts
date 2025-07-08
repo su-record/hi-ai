@@ -240,7 +240,7 @@ async function main() {
 }
 
 // Only run main when not being imported by Smithery
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1]?.includes('hi-ai') || process.argv[1]?.endsWith('index.js')) {
   main().catch((error) => {
     console.error('Server initialization failed:', error);
     process.exit(1);
