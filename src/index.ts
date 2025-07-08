@@ -40,7 +40,7 @@ import { generatePrdDefinition, generatePrd } from './tools/planning/generatePrd
 import { createUserStoriesDefinition, createUserStories } from './tools/planning/createUserStories.js';
 import { analyzeRequirementsDefinition, analyzeRequirements } from './tools/planning/analyzeRequirements.js';
 import { featureRoadmapDefinition, featureRoadmap } from './tools/planning/featureRoadmap.js';
-// import { enhancePromptDefinition, enhancePrompt } from './tools/prompt/enhancePrompt.js';
+import { enhancePromptDefinition, enhancePrompt } from './tools/prompt/enhancePrompt.js';
 // import { analyzePromptDefinition, analyzePrompt } from './tools/prompt/analyzePrompt.js';
 
 // Collect all tool definitions
@@ -87,7 +87,7 @@ const tools = [
   featureRoadmapDefinition,
   
   // Prompt Enhancement Tools
-  // enhancePromptDefinition,
+  enhancePromptDefinition,
   // analyzePromptDefinition
 ];
 
@@ -184,8 +184,8 @@ function createServer() {
           return await featureRoadmap(args as any) as CallToolResult;
           
         // Prompt Enhancement Tools
-        // case 'enhance_prompt':
-        //   return await enhancePrompt(args as any) as CallToolResult;
+        case 'enhance_prompt':
+          return await enhancePrompt(args as any) as CallToolResult;
         // case 'analyze_prompt':
         //   return await analyzePrompt(args as any) as CallToolResult;
           
