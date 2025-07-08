@@ -41,7 +41,7 @@ import { createUserStoriesDefinition, createUserStories } from './tools/planning
 import { analyzeRequirementsDefinition, analyzeRequirements } from './tools/planning/analyzeRequirements.js';
 import { featureRoadmapDefinition, featureRoadmap } from './tools/planning/featureRoadmap.js';
 import { enhancePromptDefinition, enhancePrompt } from './tools/prompt/enhancePrompt.js';
-// import { analyzePromptDefinition, analyzePrompt } from './tools/prompt/analyzePrompt.js';
+import { analyzePromptDefinition, analyzePrompt } from './tools/prompt/analyzePrompt.js';
 
 // Collect all tool definitions
 const tools = [
@@ -88,7 +88,7 @@ const tools = [
   
   // Prompt Enhancement Tools
   enhancePromptDefinition,
-  // analyzePromptDefinition
+  analyzePromptDefinition
 ];
 
 function createServer() {
@@ -186,8 +186,8 @@ function createServer() {
         // Prompt Enhancement Tools
         case 'enhance_prompt':
           return await enhancePrompt(args as any) as CallToolResult;
-        // case 'analyze_prompt':
-        //   return await analyzePrompt(args as any) as CallToolResult;
+        case 'analyze_prompt':
+          return await analyzePrompt(args as any) as CallToolResult;
           
         default:
           throw new McpError(ErrorCode.MethodNotFound, `Unknown tool: ${name}`);
