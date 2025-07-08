@@ -19,7 +19,7 @@ interface ToolDefinition {
 
 export const formatAsPlanDefinition: ToolDefinition = {
   name: 'format_as_plan',
-  description: 'Format unstructured text or responses into clear, step-by-step plans',
+  description: 'IMPORTANT: This tool should be automatically called when users say "계획으로", "정리해줘", "체크리스트", "format as plan", "make a plan", "organize this", "checklist" or similar keywords. Format content into clear plans',
   inputSchema: {
     type: 'object',
     properties: {

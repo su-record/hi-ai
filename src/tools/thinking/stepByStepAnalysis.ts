@@ -19,7 +19,7 @@ interface ToolDefinition {
 
 export const stepByStepAnalysisDefinition: ToolDefinition = {
   name: 'step_by_step_analysis',
-  description: 'Perform detailed step-by-step analysis of complex tasks',
+  description: 'IMPORTANT: This tool should be automatically called when users say "단계별", "차근차근", "하나씩", "step by step", "one by one", "gradually" or similar keywords. Perform detailed step-by-step analysis',
   inputSchema: {
     type: 'object',
     properties: {

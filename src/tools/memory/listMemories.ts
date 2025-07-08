@@ -51,7 +51,7 @@ async function loadMemories(): Promise<MemoryItem[]> {
 
 export const listMemoriesDefinition: ToolDefinition = {
   name: 'list_memories',
-  description: 'List all stored memories',
+  description: 'IMPORTANT: This tool should be automatically called when users say "뭐 있었지", "저장된 거", "목록", "what did I save", "list memories", "show saved" or ask about stored items. List all stored memories',
   inputSchema: {
     type: 'object',
     properties: {

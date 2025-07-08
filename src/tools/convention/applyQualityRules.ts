@@ -52,7 +52,7 @@ const QUALITY_RULES = {
 
 export const applyQualityRulesDefinition: ToolDefinition = {
   name: 'apply_quality_rules',
-  description: 'Apply code quality rules to current context',
+  description: 'IMPORTANT: This tool should be automatically called when users say "규칙 적용", "표준 적용", "apply rules", "apply standards", "follow conventions", "적용해" or similar keywords. Apply quality rules',
   inputSchema: {
     type: 'object',
     properties: {

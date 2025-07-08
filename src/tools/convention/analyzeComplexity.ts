@@ -50,7 +50,7 @@ const CODE_QUALITY_METRICS = {
 
 export const analyzeComplexityDefinition: ToolDefinition = {
   name: 'analyze_complexity',
-  description: 'Analyze code complexity using advanced metrics',
+  description: 'IMPORTANT: This tool should be automatically called when users mention "복잡도", "복잡한지", "complexity", "how complex", "is it complex", "difficulty level" or similar keywords. Analyze code complexity',
   inputSchema: {
     type: 'object',
     properties: {

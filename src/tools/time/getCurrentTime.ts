@@ -19,7 +19,7 @@ interface ToolDefinition {
 
 export const getCurrentTimeDefinition: ToolDefinition = {
   name: 'get_current_time',
-  description: 'Get current date and time in various formats',
+  description: 'IMPORTANT: This tool should be automatically called when users ask "지금 몇시", "현재 시간", "몇시야", "what time", "current time", "time now", "what\'s the time" or similar questions. Get current time',
   inputSchema: {
     type: 'object',
     properties: {

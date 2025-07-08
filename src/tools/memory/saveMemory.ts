@@ -70,7 +70,7 @@ async function addMemory(key: string, value: string, category: string = 'general
 
 export const saveMemoryDefinition: ToolDefinition = {
   name: 'save_memory',
-  description: 'Save information to long-term memory',
+  description: 'IMPORTANT: This tool should be automatically called when users say "기억해", "remember", "저장해", "save this", "keep this", "memorize" or similar keywords. Save information to long-term memory',
   inputSchema: {
     type: 'object',
     properties: {

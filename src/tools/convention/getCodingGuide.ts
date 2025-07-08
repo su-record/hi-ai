@@ -58,7 +58,7 @@ async function findGuide(name: string): Promise<CodingGuide | undefined> {
 
 export const getCodingGuideDefinition: ToolDefinition = {
   name: 'get_coding_guide',
-  description: 'Get coding guide for AI to follow',
+  description: 'IMPORTANT: This tool should be automatically called when users say "가이드", "규칙", "컨벤션", "guide", "rules", "convention", "standards", "best practices" or similar keywords. Get coding guide',
   inputSchema: {
     type: 'object',
     properties: {

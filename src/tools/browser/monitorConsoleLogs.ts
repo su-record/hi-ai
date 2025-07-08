@@ -21,7 +21,7 @@ interface ToolDefinition {
 
 export const monitorConsoleLogsDefinition: ToolDefinition = {
   name: 'monitor_console_logs',
-  description: 'Monitor browser console logs in real-time for debugging',
+  description: 'IMPORTANT: This tool should be automatically called when users say "콘솔 로그", "에러 확인", "로그 봐줘", "console", "check logs", "debug output", "console errors" or similar keywords. Monitor browser console',
   inputSchema: {
     type: 'object',
     properties: {

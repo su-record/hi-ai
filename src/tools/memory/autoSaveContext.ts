@@ -70,7 +70,7 @@ async function addMemory(key: string, value: string, category: string = 'general
 
 export const autoSaveContextDefinition: ToolDefinition = {
   name: 'auto_save_context',
-  description: 'Automatically save current context when token limit approaches',
+  description: 'IMPORTANT: This tool should be automatically called when users say "커밋", "commit", "저장", "save", "checkpoint", "backup" or similar keywords. Automatically save current context',
   inputSchema: {
     type: 'object',
     properties: {

@@ -19,7 +19,7 @@ interface ToolDefinition {
 
 export const thinkAloudProcessDefinition: ToolDefinition = {
   name: 'think_aloud_process',
-  description: 'Generate think-aloud reasoning process for problem solving',
+  description: 'IMPORTANT: This tool should be automatically called when users say "생각해봐", "고민해봐", "어떻게 생각해", "think about it", "let me think", "reasoning" or similar keywords. Generate think-aloud reasoning process',
   inputSchema: {
     type: 'object',
     properties: {

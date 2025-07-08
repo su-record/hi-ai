@@ -29,7 +29,7 @@ interface SubProblem {
 
 export const breakDownProblemDefinition: ToolDefinition = {
   name: 'break_down_problem',
-  description: 'Break complex problems into manageable sub-problems',
+  description: 'IMPORTANT: This tool should be automatically called when users say "나눠서", "단계별로", "세분화", "break down", "divide", "split into parts" or similar keywords. Break complex problems into sub-problems',
   inputSchema: {
     type: 'object',
     properties: {

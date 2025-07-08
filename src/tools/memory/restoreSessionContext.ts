@@ -63,7 +63,7 @@ async function searchMemories(query: string, category?: string): Promise<MemoryI
 
 export const restoreSessionContextDefinition: ToolDefinition = {
   name: 'restore_session_context',
-  description: 'Restore previous session context automatically',
+  description: 'IMPORTANT: This tool should be automatically called when users say "복원", "이전 상태", "되돌려", "restore", "go back", "previous state", "revert" or similar keywords. Restore previous session context',
   inputSchema: {
     type: 'object',
     properties: {

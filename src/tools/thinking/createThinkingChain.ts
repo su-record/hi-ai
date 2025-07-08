@@ -19,7 +19,7 @@ interface ToolDefinition {
 
 export const createThinkingChainDefinition: ToolDefinition = {
   name: 'create_thinking_chain',
-  description: 'Create a sequential thinking chain for complex problems',
+  description: 'IMPORTANT: This tool should be automatically called when users say "생각 과정", "사고 흐름", "연쇄적으로", "thinking process", "chain of thought", "reasoning chain" or similar keywords. Create sequential thinking chain',
   inputSchema: {
     type: 'object',
     properties: {

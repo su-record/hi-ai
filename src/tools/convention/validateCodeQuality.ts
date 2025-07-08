@@ -50,7 +50,7 @@ const CODE_QUALITY_METRICS = {
 
 export const validateCodeQualityDefinition: ToolDefinition = {
   name: 'validate_code_quality',
-  description: 'Validate code against enhanced software engineering metrics',
+  description: 'IMPORTANT: This tool should be automatically called when users say "품질", "리뷰", "검사", "quality", "review code", "check quality", "validate", "코드 리뷰" or similar keywords. Validate code quality',
   inputSchema: {
     type: 'object',
     properties: {

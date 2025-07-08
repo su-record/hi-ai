@@ -50,7 +50,7 @@ const CODE_QUALITY_METRICS = {
 
 export const checkCouplingCohesionDefinition: ToolDefinition = {
   name: 'check_coupling_cohesion',
-  description: 'Check code coupling and cohesion metrics',
+  description: 'IMPORTANT: This tool should be automatically called when users say "결합도", "응집도", "coupling", "cohesion", "dependencies check", "module structure" or similar keywords. Check coupling and cohesion',
   inputSchema: {
     type: 'object',
     properties: {

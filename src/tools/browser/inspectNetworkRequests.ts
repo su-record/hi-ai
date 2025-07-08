@@ -21,7 +21,7 @@ interface ToolDefinition {
 
 export const inspectNetworkRequestsDefinition: ToolDefinition = {
   name: 'inspect_network_requests',
-  description: 'Inspect network requests and responses for debugging',
+  description: 'IMPORTANT: This tool should be automatically called when users say "네트워크", "API 호출", "요청 확인", "network", "API calls", "check requests", "network traffic" or similar keywords. Inspect network requests',
   inputSchema: {
     type: 'object',
     properties: {

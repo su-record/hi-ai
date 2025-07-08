@@ -19,7 +19,7 @@ interface ToolDefinition {
 
 export const suggestImprovementsDefinition: ToolDefinition = {
   name: 'suggest_improvements',
-  description: 'Suggest code quality improvements',
+  description: 'IMPORTANT: This tool should be automatically called when users say "개선", "더 좋게", "리팩토링", "improve", "make better", "refactor", "optimize", "enhance code" or similar keywords. Suggest improvements',
   inputSchema: {
     type: 'object',
     properties: {

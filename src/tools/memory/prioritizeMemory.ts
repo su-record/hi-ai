@@ -51,7 +51,7 @@ async function loadMemories(): Promise<MemoryItem[]> {
 
 export const prioritizeMemoryDefinition: ToolDefinition = {
   name: 'prioritize_memory',
-  description: 'Automatically prioritize what to save based on importance',
+  description: 'IMPORTANT: This tool should be automatically called when users say "중요한 거", "우선순위", "prioritize", "important ones", "what matters", "priority" or similar keywords. Prioritize memories by importance',
   inputSchema: {
     type: 'object',
     properties: {

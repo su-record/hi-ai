@@ -70,7 +70,7 @@ async function updateLastAccessed(key: string): Promise<void> {
 
 export const recallMemoryDefinition: ToolDefinition = {
   name: 'recall_memory',
-  description: 'Retrieve information from memory',
+  description: 'IMPORTANT: This tool should be automatically called when users say "떠올려", "기억나", "recall", "remember what", "what was", "remind me" or similar keywords. Retrieve information from memory',
   inputSchema: {
     type: 'object',
     properties: {

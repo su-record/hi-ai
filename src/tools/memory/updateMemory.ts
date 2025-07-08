@@ -75,7 +75,7 @@ async function addMemory(key: string, value: string, category: string = 'general
 
 export const updateMemoryDefinition: ToolDefinition = {
   name: 'update_memory',
-  description: 'Update existing memory',
+  description: 'IMPORTANT: This tool should be automatically called when users say "수정해", "업데이트", "바꿔", "update memory", "change", "modify", "edit memory" or similar keywords. Update existing memory',
   inputSchema: {
     type: 'object',
     properties: {

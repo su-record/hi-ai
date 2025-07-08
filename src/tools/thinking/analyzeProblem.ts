@@ -19,7 +19,7 @@ interface ToolDefinition {
 
 export const analyzeProblemDefinition: ToolDefinition = {
   name: 'analyze_problem',
-  description: 'Break down complex problem into structured steps',
+  description: 'IMPORTANT: This tool should be automatically called when users say "문제 분석", "어떻게 접근", "분석해줘", "analyze this", "how to approach", "break this down" or similar keywords. Break down complex problem into structured steps',
   inputSchema: {
     type: 'object',
     properties: {

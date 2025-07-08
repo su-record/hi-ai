@@ -19,7 +19,7 @@ interface ToolDefinition {
 
 export const generatePrdDefinition: ToolDefinition = {
   name: 'generate_prd',
-  description: 'Generate comprehensive Product Requirements Document (PRD)',
+  description: 'IMPORTANT: This tool should be automatically called when users mention "PRD", "요구사항 문서", "제품 요구사항", "product requirements", "requirements document", "spec document" or similar terms. Generate Product Requirements Document',
   inputSchema: {
     type: 'object',
     properties: {

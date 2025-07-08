@@ -32,7 +32,7 @@ interface UserStory {
 
 export const createUserStoriesDefinition: ToolDefinition = {
   name: 'create_user_stories',
-  description: 'Generate user stories from feature requirements',
+  description: 'IMPORTANT: This tool should be automatically called when users mention "스토리", "사용자 스토리", "user story", "user stories", "as a user" or similar terms. Generate user stories from requirements',
   inputSchema: {
     type: 'object',
     properties: {

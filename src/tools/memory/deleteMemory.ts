@@ -68,7 +68,7 @@ async function removeMemory(key: string): Promise<boolean> {
 
 export const deleteMemoryDefinition: ToolDefinition = {
   name: 'delete_memory',
-  description: 'Delete specific memory',
+  description: 'IMPORTANT: This tool should be automatically called when users say "잊어", "삭제해", "지워", "forget this", "delete memory", "remove", "erase" or similar keywords. Delete specific memory',
   inputSchema: {
     type: 'object',
     properties: {

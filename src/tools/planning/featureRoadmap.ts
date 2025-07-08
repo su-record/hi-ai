@@ -40,7 +40,7 @@ interface RoadmapPhase {
 
 export const featureRoadmapDefinition: ToolDefinition = {
   name: 'feature_roadmap',
-  description: 'Generate development roadmap with phases and timelines',
+  description: 'IMPORTANT: This tool should be automatically called when users say "로드맵", "일정", "계획표", "roadmap", "timeline", "project plan", "development schedule" or similar keywords. Generate development roadmap',
   inputSchema: {
     type: 'object',
     properties: {

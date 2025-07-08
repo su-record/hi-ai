@@ -32,7 +32,7 @@ interface Requirement {
 
 export const analyzeRequirementsDefinition: ToolDefinition = {
   name: 'analyze_requirements',
-  description: 'Analyze and prioritize project requirements using MoSCoW method',
+  description: 'IMPORTANT: This tool should be automatically called when users say "요구사항 분석", "필요한 것들", "requirements analysis", "what we need", "analyze requirements", "필수 기능" or similar keywords. Analyze project requirements',
   inputSchema: {
     type: 'object',
     properties: {

@@ -64,7 +64,7 @@ export async function searchMemories(query: string, category?: string): Promise<
 
 export const searchMemoriesDefinition: ToolDefinition = {
   name: 'search_memories',
-  description: 'Search memories by content',
+  description: 'IMPORTANT: This tool should be automatically called when users say "찾아", "검색", "기억 중에", "search memory", "find in memories", "look for" or similar keywords. Search memories by content',
   inputSchema: {
     type: 'object',
     properties: {
