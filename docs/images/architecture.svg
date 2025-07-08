@@ -1,0 +1,81 @@
+<svg width="700" height="500" xmlns="http://www.w3.org/2000/svg">
+  <!-- 배경 -->
+  <rect width="700" height="500" fill="#f8f9fa"/>
+  
+  <!-- 제목 -->
+  <text x="350" y="40" text-anchor="middle" font-size="24" font-weight="bold" fill="#1a1a1a" font-family="Arial, sans-serif">
+    Hi-AI 시스템 아키텍처
+  </text>
+  
+  <!-- 메인 컨테이너 -->
+  <g transform="translate(100, 80)">
+    
+    <!-- 1. 자연어 입력 계층 -->
+    <g>
+      <rect x="0" y="0" width="500" height="80" rx="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+      <text x="250" y="30" text-anchor="middle" font-size="18" font-weight="bold" fill="#1565c0" font-family="Arial, sans-serif">
+        🗣️ 자연어 입력 계층
+      </text>
+      <text x="250" y="55" text-anchor="middle" font-size="14" fill="#424242" font-family="Arial, sans-serif">
+        사용자의 자연스러운 언어로 명령 입력
+      </text>
+    </g>
+    
+    <!-- 화살표 1 -->
+    <g>
+      <line x1="250" y1="80" x2="250" y2="100" stroke="#666" stroke-width="2"/>
+      <polygon points="250,105 245,95 255,95" fill="#666"/>
+    </g>
+    
+    <!-- 2. 키워드 인식 엔진 -->
+    <g transform="translate(0, 105)">
+      <rect x="0" y="0" width="500" height="80" rx="8" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/>
+      <text x="250" y="30" text-anchor="middle" font-size="18" font-weight="bold" fill="#e65100" font-family="Arial, sans-serif">
+        🔍 키워드 인식 엔진
+      </text>
+      <text x="250" y="55" text-anchor="middle" font-size="14" fill="#424242" font-family="Arial, sans-serif">
+        다국어 키워드 매핑 / 의도 분석
+      </text>
+    </g>
+    
+    <!-- 화살표 2 -->
+    <g transform="translate(0, 185)">
+      <line x1="250" y1="0" x2="250" y2="20" stroke="#666" stroke-width="2"/>
+      <polygon points="250,25 245,15 255,15" fill="#666"/>
+    </g>
+    
+    <!-- 3. 도구 오케스트레이션 -->
+    <g transform="translate(0, 210)">
+      <rect x="0" y="0" width="500" height="80" rx="8" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2"/>
+      <text x="250" y="30" text-anchor="middle" font-size="18" font-weight="bold" fill="#6a1b9a" font-family="Arial, sans-serif">
+        🎭 도구 오케스트레이션
+      </text>
+      <text x="250" y="55" text-anchor="middle" font-size="14" fill="#424242" font-family="Arial, sans-serif">
+        31개 도구 / 7개 카테고리
+      </text>
+    </g>
+    
+    <!-- 화살표 3 -->
+    <g transform="translate(0, 290)">
+      <line x1="250" y1="0" x2="250" y2="20" stroke="#666" stroke-width="2"/>
+      <polygon points="250,25 245,15 255,15" fill="#666"/>
+    </g>
+    
+    <!-- 4. MCP 프로토콜 계층 -->
+    <g transform="translate(0, 315)">
+      <rect x="0" y="0" width="500" height="80" rx="8" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+      <text x="250" y="30" text-anchor="middle" font-size="18" font-weight="bold" fill="#2e7d32" font-family="Arial, sans-serif">
+        🔌 MCP 프로토콜 계층
+      </text>
+      <text x="250" y="55" text-anchor="middle" font-size="14" fill="#424242" font-family="Arial, sans-serif">
+        표준 인터페이스 / 에디터 통합
+      </text>
+    </g>
+    
+  </g>
+  
+  <!-- 하단 설명 -->
+  <text x="350" y="490" text-anchor="middle" font-size="12" fill="#666" font-family="Arial, sans-serif">
+    Model Context Protocol (MCP) 기반 자연어 처리 개발 도구
+  </text>
+</svg>
