@@ -95,7 +95,7 @@ function createServer() {
   const server = new Server(
     {
       name: 'hi-ai',
-      version: '1.0.3',
+      version: '1.0.4',
     },
     {
       capabilities: {
