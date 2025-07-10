@@ -17,7 +17,13 @@ interface ToolDefinition {
   };
 }
 
-import { Project } from "ts-morph";
+import { Project, ScriptKind } from "ts-morph";
+
+// Reusable in-memory project to avoid re-parsing standard lib every call
+const AST_PROJECT = new Project({
+  useInMemoryFileSystem: true,
+  compilerOptions: { allowJs: true, skipLibCheck: true }
+});
 
 // Enhanced Software Engineering Metrics
 const CODE_QUALITY_METRICS = {
@@ -79,8 +85,10 @@ export async function analyzeComplexity(args: { code: string; metrics?: string }
   // AST 기반 cyclomatic complexity 분석
   let astCyclomatic = 1;
   try {
-    const project = new Project({ useInMemoryFileSystem: true });
-    const sourceFile = project.createSourceFile('temp.ts', complexityCode);
+    const sourceFile = AST_PROJECT.createSourceFile('temp.ts', complexityCode, {
+      overwrite: true,
+      scriptKind: ScriptKind.TS
+    });
     sourceFile.forEachDescendant((node) => {
       const kind = node.getKindName();
       if (

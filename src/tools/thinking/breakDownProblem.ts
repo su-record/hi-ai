@@ -1,6 +1,11 @@
 // Sequential thinking tool - completely independent
 
-import { Project } from "ts-morph";
+import { Project, ScriptKind } from "ts-morph";
+
+const AST_PROJECT = new Project({
+  useInMemoryFileSystem: true,
+  compilerOptions: { allowJs: true, skipLibCheck: true }
+});
 
 interface ToolResult {
   content: Array<{
@@ -50,8 +55,10 @@ export async function breakDownProblem(args: { problem: string; maxDepth?: numbe
   let codeStructureSubProblems: SubProblem[] | null = null;
   if (breakdownProblem.includes('function') || breakdownProblem.includes('class') || breakdownProblem.includes('=>')) {
     try {
-      const project = new Project({ useInMemoryFileSystem: true });
-      const sourceFile = project.createSourceFile('temp.ts', breakdownProblem);
+      const sourceFile = AST_PROJECT.createSourceFile('temp.ts', breakdownProblem, {
+        overwrite: true,
+        scriptKind: ScriptKind.TS
+      });
       const funcs = sourceFile.getFunctions();
       const classes = sourceFile.getClasses();
       const vars = sourceFile.getVariableDeclarations();
