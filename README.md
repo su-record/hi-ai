@@ -25,6 +25,7 @@ Hi-AI는 Anthropic의 MCP(Model Context Protocol) 표준을 구현한 서버로,
 ### 3. 📏 코드 품질 분석
 - **📈 복잡도 메트릭스**: Cyclomatic, Cognitive, Halstead 복잡도 분석
 - **🧩 AST 기반 분석 추가**: analyze_complexity · check_coupling_cohesion · break_down_problem 개선
+  - JavaScript 프로젝트도 `allowJs: true` 옵션으로 ts-morph 파싱 지원
 - **🔗 결합도/응집도 평가**: 모듈 구조의 건전성 검증
 - **💡 실시간 개선 제안**: 코드 품질 향상을 위한 구체적 방안 제시
 
