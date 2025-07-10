@@ -62,6 +62,9 @@ export const checkCouplingCohesionDefinition: ToolDefinition = {
   }
 };
 
+import { Project } from "ts-morph";
+import * as ts from "typescript";
+
 export async function checkCouplingCohesion(args: { code: string; type?: string; checkDependencies?: boolean }): Promise<ToolResult> {
   const { code: couplingCode, type: couplingType = 'function', checkDependencies = false } = args;
   
@@ -75,6 +78,32 @@ export async function checkCouplingCohesion(args: { code: string; type?: string;
     recommendations: [] as string[],
     status: 'pending' as string
   };
+
+  // AST 기반 의존성/구조 분석
+  try {
+    const project = new Project({ useInMemoryFileSystem: true });
+    const sourceFile = project.createSourceFile('temp.ts', couplingCode);
+    // Import/Require 분석
+    const importDecls = sourceFile.getImportDeclarations();
+    const requireCalls = sourceFile.getDescendantsOfKind(ts.SyntaxKind.CallExpression).filter(call => call.getExpression().getText() === 'require');
+    // 클래스/함수/모듈 구조 분석
+    const classDecls = sourceFile.getClasses();
+    const funcDecls = sourceFile.getFunctions();
+    const exportDecls = sourceFile.getExportDeclarations();
+    couplingAnalysis.results.ast = {
+      importCount: importDecls.length,
+      requireCount: requireCalls.length,
+      classCount: classDecls.length,
+      functionCount: funcDecls.length,
+      exportCount: exportDecls.length,
+      importModules: importDecls.map(d => d.getModuleSpecifierValue()),
+      exportedNames: exportDecls.map(d => d.getNamedExports().map(e => e.getName()))
+    };
+  } catch (e) {
+    couplingAnalysis.results.ast = {
+      error: 'AST 분석 실패: ' + (e instanceof Error ? e.message : String(e))
+    };
+  }
   
   // Dependency analysis (Coupling)
   const imports = (couplingCode.match(/import\s+.*?\s+from\s+['"](.*?)['"]/g) || []).length;

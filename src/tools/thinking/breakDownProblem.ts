@@ -1,5 +1,7 @@
 // Sequential thinking tool - completely independent
 
+import { Project } from "ts-morph";
+
 interface ToolResult {
   content: Array<{
     type: 'text';
@@ -43,6 +45,52 @@ export const breakDownProblemDefinition: ToolDefinition = {
 
 export async function breakDownProblem(args: { problem: string; maxDepth?: number; approach?: string }): Promise<ToolResult> {
   const { problem: breakdownProblem, maxDepth = 3, approach = 'hierarchical' } = args;
+  
+  // 코드로 추정되는 입력이면 AST 기반 구조 분해 시도
+  let codeStructureSubProblems: SubProblem[] | null = null;
+  if (breakdownProblem.includes('function') || breakdownProblem.includes('class') || breakdownProblem.includes('=>')) {
+    try {
+      const project = new Project({ useInMemoryFileSystem: true });
+      const sourceFile = project.createSourceFile('temp.ts', breakdownProblem);
+      const funcs = sourceFile.getFunctions();
+      const classes = sourceFile.getClasses();
+      const vars = sourceFile.getVariableDeclarations();
+      codeStructureSubProblems = [];
+      funcs.forEach((f, i) => {
+        codeStructureSubProblems!.push({
+          id: `codeFunc${i+1}`,
+          title: `함수 분석: ${f.getName() || '익명함수'}`,
+          description: f.getText().slice(0, 100) + (f.getText().length > 100 ? '...' : ''),
+          complexity: 'medium',
+          priority: 'high',
+          dependencies: []
+        });
+      });
+      classes.forEach((c, i) => {
+        codeStructureSubProblems!.push({
+          id: `codeClass${i+1}`,
+          title: `클래스 분석: ${c.getName() || '익명클래스'}`,
+          description: c.getText().slice(0, 100) + (c.getText().length > 100 ? '...' : ''),
+          complexity: 'high',
+          priority: 'high',
+          dependencies: []
+        });
+      });
+      vars.forEach((v, i) => {
+        codeStructureSubProblems!.push({
+          id: `codeVar${i+1}`,
+          title: `변수 분석: ${v.getName()}`,
+          description: v.getText().slice(0, 100) + (v.getText().length > 100 ? '...' : ''),
+          complexity: 'low',
+          priority: 'medium',
+          dependencies: []
+        });
+      });
+      if (codeStructureSubProblems.length === 0) codeStructureSubProblems = null;
+    } catch (e) {
+      codeStructureSubProblems = null;
+    }
+  }
   
   const generateSubProblems = (parentProblem: string, depth: number, maxDepth: number): SubProblem[] | null => {
     if (depth >= maxDepth) return null;
@@ -94,7 +142,7 @@ export async function breakDownProblem(args: { problem: string; maxDepth?: numbe
         title: breakdownProblem,
         description: `Root problem: ${breakdownProblem}`,
         complexity: 'high',
-        subProblems: generateSubProblems(breakdownProblem, 1, maxDepth)
+        subProblems: codeStructureSubProblems || generateSubProblems(breakdownProblem, 1, maxDepth)
       }
     },
     executionOrder: approach === 'dependency-based' ? 

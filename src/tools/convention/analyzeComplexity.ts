@@ -17,6 +17,8 @@ interface ToolDefinition {
   };
 }
 
+import { Project } from "ts-morph";
+
 // Enhanced Software Engineering Metrics
 const CODE_QUALITY_METRICS = {
   COMPLEXITY: {
@@ -73,6 +75,42 @@ export async function analyzeComplexity(args: { code: string; metrics?: string }
     recommendations: [] as string[],
     status: 'pending' as string
   };
+
+  // AST 기반 cyclomatic complexity 분석
+  let astCyclomatic = 1;
+  try {
+    const project = new Project({ useInMemoryFileSystem: true });
+    const sourceFile = project.createSourceFile('temp.ts', complexityCode);
+    sourceFile.forEachDescendant((node) => {
+      const kind = node.getKindName();
+      if (
+        kind === 'IfStatement' ||
+        kind === 'ForStatement' ||
+        kind === 'ForOfStatement' ||
+        kind === 'ForInStatement' ||
+        kind === 'WhileStatement' ||
+        kind === 'CaseClause' ||
+        kind === 'ConditionalExpression' ||
+        kind === 'DoStatement' ||
+        kind === 'CatchClause' ||
+        kind === 'BinaryExpression' // &&, ||
+      ) {
+        astCyclomatic++;
+      }
+    });
+    complexityAnalysis.results.astCyclomaticComplexity = {
+      value: astCyclomatic,
+      threshold: CODE_QUALITY_METRICS.COMPLEXITY.maxCyclomaticComplexity,
+      status: astCyclomatic <= CODE_QUALITY_METRICS.COMPLEXITY.maxCyclomaticComplexity ? 'pass' : 'fail',
+      description: 'AST 기반 분기/조건문 수를 통한 cyclomatic complexity'
+    };
+  } catch (e) {
+    complexityAnalysis.results.astCyclomaticComplexity = {
+      value: null,
+      status: 'error',
+      description: 'AST 분석 실패: ' + (e instanceof Error ? e.message : String(e))
+    };
+  }
   
   if (complexityMetrics === 'cyclomatic' || complexityMetrics === 'all') {
     const cyclomaticComplexityScore = (complexityCode.match(/\bif\b|\bfor\b|\bwhile\b|\bcase\b|\b&&\b|\b\|\|\b/g) || []).length + 1;
