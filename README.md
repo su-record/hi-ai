@@ -38,7 +38,7 @@ Hi-AI는 Anthropic의 MCP(Model Context Protocol) 표준을 구현한 서버로,
 ### 시스템 아키텍처
 
 <p align="center">
-  <img src="docs/images/architecture.svg" alt="시스템 아키텍처" width="700">
+  <img src="https://raw.githubusercontent.com/su-record/hi-ai/main/docs/images/architecture.svg" alt="시스템 아키텍처" width="700">
 </p>
 
 ### 도구 카테고리 및 구성
