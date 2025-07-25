@@ -6,6 +6,10 @@
 
 Model Context Protocol (MCP) 기반의 자연어 처리 개발 도구로, AI와의 원활한 협업을 통해 개발 생산성을 극대화합니다.
 
+<a href="https://glama.ai/mcp/servers/@su-record/hi-ai">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/@su-record/hi-ai/badge" alt="Hi-AI MCP server" />
+</a>
+
 ## 📊 프로젝트 개요
 
 Hi-AI는 Anthropic의 MCP(Model Context Protocol) 표준을 구현한 서버로, 개발자가 자연스러운 대화를 통해 복잡한 개발 작업을 수행할 수 있도록 설계되었습니다. 🎯 31개의 특화된 도구를 제공하며, 키워드 기반 의도 인식을 통해 명시적인 명령어 없이도 적절한 도구를 자동으로 실행합니다. ✨
