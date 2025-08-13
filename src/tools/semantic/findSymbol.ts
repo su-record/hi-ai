@@ -66,7 +66,7 @@ export async function findSymbol(args: {
   
   try {
     // Clear previous files and add project files
-    project.removeSourceFiles();
+    project.getSourceFiles().forEach(sf => project.removeSourceFile(sf));
     const pattern = path.join(projectPath, '**/*.{ts,tsx,js,jsx}');
     project.addSourceFilesAtPaths(pattern);
     

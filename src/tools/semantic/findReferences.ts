@@ -63,7 +63,7 @@ export async function findReferences(args: {
   
   try {
     // Clear previous files and add project files
-    project.removeSourceFiles();
+    project.getSourceFiles().forEach(sf => project.removeSourceFile(sf));
     const pattern = path.join(projectPath, '**/*.{ts,tsx,js,jsx}');
     project.addSourceFilesAtPaths(pattern);
     
@@ -73,28 +73,30 @@ export async function findReferences(args: {
     if (filePath && line) {
       const sourceFile = project.getSourceFile(filePath);
       if (sourceFile) {
-        const position = sourceFile.getPositionOfLineAndColumn(line, 1);
+        const position = sourceFile.compilerNode.getPositionOfLineAndCharacter(line - 1, 0);
         const node = sourceFile.getDescendantAtPos(position);
         
         if (node) {
           const symbol = node.getSymbol();
           if (symbol) {
-            const references = symbol.findReferences();
+            const references = project.getLanguageService().findReferencesAtPosition(sourceFile, position);
             
-            for (const ref of references) {
-              for (const reference of ref.getReferences()) {
-                const refSourceFile = reference.getSourceFile();
-                const refNode = reference.getNode();
-                const start = refNode.getStartLinePos();
-                const pos = refSourceFile.getLineAndColumnAtPos(start);
-                
-                allReferences.push({
-                  filePath: refSourceFile.getFilePath(),
-                  line: pos.line,
-                  column: pos.column,
-                  text: refNode.getParent()?.getText().substring(0, 100) || refNode.getText(),
-                  isDefinition: reference.isDefinition()
-                });
+            if (references) {
+              for (const ref of references) {
+                for (const reference of ref.getReferences()) {
+                  const refSourceFile = reference.getSourceFile();
+                  const refNode = reference.getNode();
+                  const start = refNode.getStartLinePos();
+                  const pos = refSourceFile.getLineAndColumnAtPos(start);
+                  
+                  allReferences.push({
+                    filePath: refSourceFile.getFilePath(),
+                    line: pos.line,
+                    column: pos.column,
+                    text: refNode.getParent()?.getText().substring(0, 100) || refNode.getText(),
+                    isDefinition: reference.isDefinition() || false
+                  });
+                }
               }
             }
           }
