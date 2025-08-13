@@ -1,5 +1,20 @@
 # 변경 이력 (Changelog)
 
+## [Unreleased]
+### ✨ 새로운 기능
+- **시맨틱 코드 분석 도구 추가**
+  - `find_symbol`: 프로젝트 전체에서 함수, 클래스, 변수 등 심볼 검색
+  - `find_references`: 심볼의 모든 참조 위치 찾기
+  - ts-morph 기반 정확한 AST 분석으로 단순 텍스트 매칭보다 정확
+  - TypeScript, JavaScript, JSX, TSX 파일 지원
+
+### 🐛 버그 수정
+- **브라우저 도구 수정**
+  - `browserUtils.ts` 추가: PC에 설치된 Chrome/Edge/Brave 자동 탐지
+  - `monitorConsoleLogs`, `inspectNetworkRequests` 도구가 브라우저 실행 경로를 자동으로 찾도록 개선
+  - 브라우저를 찾지 못할 경우 명확한 에러 메시지 및 해결 방법 제공
+  - Windows/macOS/Linux 모든 플랫폼 지원
+
 ## [1.0.6] - 2025-07-10
 ### 🛠️ 성능 최적화
 - ts-morph `Project`를 싱글턴으로 재사용하여 메모리·CPU 사용량 감소

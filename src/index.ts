@@ -12,6 +12,10 @@ import {
 
 // Import all tool definitions and handlers
 import { getCurrentTimeDefinition, getCurrentTime } from './tools/time/getCurrentTime.js';
+
+// Semantic code analysis tools (Serena-inspired)
+import { findSymbolDefinition, findSymbol } from './tools/semantic/findSymbol.js';
+import { findReferencesDefinition, findReferences } from './tools/semantic/findReferences.js';
 import { createThinkingChainDefinition, createThinkingChain } from './tools/thinking/createThinkingChain.js';
 import { analyzeProblemDefinition, analyzeProblem } from './tools/thinking/analyzeProblem.js';
 import { stepByStepAnalysisDefinition, stepByStepAnalysis } from './tools/thinking/stepByStepAnalysis.js';
@@ -47,6 +51,10 @@ import { analyzePromptDefinition, analyzePrompt } from './tools/prompt/analyzePr
 const tools = [
   // Time Utility Tools
   getCurrentTimeDefinition,
+  
+  // Semantic Code Analysis Tools (Serena-inspired)
+  findSymbolDefinition,
+  findReferencesDefinition,
   
   // Sequential Thinking Tools  
   createThinkingChainDefinition,
@@ -116,6 +124,12 @@ function createServer() {
         // Time Utility Tools
         case 'get_current_time':
           return await getCurrentTime(args as any) as CallToolResult;
+          
+        // Semantic Code Analysis Tools
+        case 'find_symbol':
+          return await findSymbol(args as any) as CallToolResult;
+        case 'find_references':
+          return await findReferences(args as any) as CallToolResult;
           
         // Sequential Thinking Tools
         case 'create_thinking_chain':

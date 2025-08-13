@@ -1,6 +1,7 @@
 // Browser development tool - completely independent
 
 import puppeteer from 'puppeteer-core';
+import { getBrowserLaunchOptions } from './browserUtils.js';
 
 interface ToolResult {
   content: Array<{
@@ -37,7 +38,9 @@ export async function inspectNetworkRequests(args: { url: string; filterType?: s
   const { url: inspectUrl, filterType = 'all', includeHeaders = false } = args;
   
   try {
-    const browser = await puppeteer.launch({ headless: true });
+    // Get browser launch options with proper executable path
+    const launchOptions = getBrowserLaunchOptions();
+    const browser = await puppeteer.launch(launchOptions);
     const page = await browser.newPage();
     
     const networkRequests: Array<{
@@ -165,8 +168,11 @@ export async function inspectNetworkRequests(args: { url: string; filterType?: s
     content: [{ type: 'text', text: `Network Inspection Results:\n${JSON.stringify(networkInspectionResult, null, 2)}` }]
   };
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const helpMessage = errorMessage.includes('Chrome') ? 
+      '\n\nTroubleshooting:\n1. Install Chrome: https://www.google.com/chrome/\n2. Or set CHROME_PATH environment variable\n3. Or install puppeteer instead of puppeteer-core' : '';
     return {
-      content: [{ type: 'text', text: `Error inspecting network requests: ${error instanceof Error ? error.message : 'Unknown error'}` }]
+      content: [{ type: 'text', text: `Error inspecting network requests: ${errorMessage}${helpMessage}` }]
     };
   }
 }

@@ -1,6 +1,7 @@
 // Browser development tool - completely independent
 
 import puppeteer from 'puppeteer-core';
+import { getBrowserLaunchOptions } from './browserUtils.js';
 
 interface ToolResult {
   content: Array<{
@@ -37,7 +38,9 @@ export async function monitorConsoleLogs(args: { url: string; logLevel?: string;
   const { url: monitorUrl, logLevel = 'all', duration = 30 } = args;
   
   try {
-    const browser = await puppeteer.launch({ headless: true });
+    // Get browser launch options with proper executable path
+    const launchOptions = getBrowserLaunchOptions();
+    const browser = await puppeteer.launch(launchOptions);
     const page = await browser.newPage();
     
     const logs: Array<{timestamp: string, level: string, message: string, source?: string}> = [];
@@ -95,8 +98,11 @@ export async function monitorConsoleLogs(args: { url: string; logLevel?: string;
       content: [{ type: 'text', text: `Console Monitor Results:\n${JSON.stringify(consoleMonitorResult, null, 2)}` }]
     };
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const helpMessage = errorMessage.includes('Chrome') ? 
+      '\n\nTroubleshooting:\n1. Install Chrome: https://www.google.com/chrome/\n2. Or set CHROME_PATH environment variable\n3. Or install puppeteer instead of puppeteer-core' : '';
     return {
-      content: [{ type: 'text', text: `Error monitoring console logs: ${error instanceof Error ? error.message : 'Unknown error'}` }]
+      content: [{ type: 'text', text: `Error monitoring console logs: ${errorMessage}${helpMessage}` }]
     };
   }
 }
