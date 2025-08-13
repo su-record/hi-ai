@@ -1,6 +1,6 @@
 {
   "name": "@su-record/hi-ai",
-  "version": "1.0.6",
+  "version": "1.1.0",
   "description": "AI 어렵지 않아! 하이아이 한마디로 시작하는 가장 쉬운 AI 개발 도구",
   "main": "dist/index.js",
   "module": "./src/index.ts",
