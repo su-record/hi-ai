@@ -5,8 +5,8 @@ WORKDIR /app
 # Copy package files first for better caching
 COPY package*.json ./
 
-# Install dependencies (cached if package.json unchanged)
-RUN npm ci --only=production
+# Install all dependencies (including devDependencies for build)
+RUN npm install
 
 # Copy application code
 COPY . .
@@ -14,8 +14,8 @@ COPY . .
 # Build the application
 RUN npm run build
 
-# Install Smithery CLI and build
-RUN npm install -g @smithery/cli && \
-    smithery build -o .smithery/index.cjs
+# Install Smithery dependencies and build
+RUN npm install @smithery/sdk chalk && \
+    npx -y @smithery/cli build -o .smithery/index.cjs
 
 CMD ["node", "dist/index.js"]
