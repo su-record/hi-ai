@@ -19,13 +19,16 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm install
-
 # Copy application code
 COPY . .
 
+# Install dependencies
+RUN npm install
+
 # Build the application
 RUN npm run build
+
+# Build for Smithery
+RUN npx -y @smithery/cli build -o .smithery/index.cjs
 
 CMD ["node", "dist/index.js"]
