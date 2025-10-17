@@ -46,6 +46,7 @@ import { analyzeRequirementsDefinition, analyzeRequirements } from './tools/plan
 import { featureRoadmapDefinition, featureRoadmap } from './tools/planning/featureRoadmap.js';
 import { enhancePromptDefinition, enhancePrompt } from './tools/prompt/enhancePrompt.js';
 import { analyzePromptDefinition, analyzePrompt } from './tools/prompt/analyzePrompt.js';
+import { previewUiAsciiDefinition, previewUiAscii } from './tools/ui/previewUiAscii.js';
 
 // Collect all tool definitions
 const tools = [
@@ -96,14 +97,17 @@ const tools = [
   
   // Prompt Enhancement Tools
   enhancePromptDefinition,
-  analyzePromptDefinition
+  analyzePromptDefinition,
+
+  // UI Preview Tools
+  previewUiAsciiDefinition
 ];
 
 function createServer() {
   const server = new Server(
     {
       name: 'hi-ai',
-      version: '1.0.4',
+      version: '1.2.0',
     },
     {
       capabilities: {
@@ -202,7 +206,11 @@ function createServer() {
           return await enhancePrompt(args as any) as CallToolResult;
         case 'analyze_prompt':
           return await analyzePrompt(args as any) as CallToolResult;
-          
+
+        // UI Preview Tools
+        case 'preview_ui_ascii':
+          return await previewUiAscii(args as any) as CallToolResult;
+
         default:
           throw new McpError(ErrorCode.MethodNotFound, `Unknown tool: ${name}`);
       }
