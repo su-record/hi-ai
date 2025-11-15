@@ -1,23 +1,8 @@
 // Convention management tool - completely independent
 
-interface ToolResult {
-  content: Array<{
-    type: 'text';
-    text: string;
-  }>;
-}
-
-interface ToolDefinition {
-  name: string;
-  description: string;
-  inputSchema: {
-    type: 'object';
-    properties: Record<string, any>;
-    required: string[];
-  };
-}
-
 import { Project, ScriptKind } from "ts-morph";
+import { PythonParser } from '../../lib/PythonParser.js';
+import { ToolResult, ToolDefinition } from '../../types/tool.js';
 
 // Reusable in-memory project to avoid re-parsing standard lib every call
 const AST_PROJECT = new Project({
@@ -58,7 +43,7 @@ const CODE_QUALITY_METRICS = {
 
 export const analyzeComplexityDefinition: ToolDefinition = {
   name: 'analyze_complexity',
-  description: 'IMPORTANT: This tool should be automatically called when users mention "복잡도", "복잡한지", "complexity", "how complex", "is it complex", "difficulty level" or similar keywords. Analyze code complexity',
+  description: '복잡도|복잡한지|complexity|how complex|난이도 - Analyze code complexity',
   inputSchema: {
     type: 'object',
     properties: {
@@ -71,7 +56,36 @@ export const analyzeComplexityDefinition: ToolDefinition = {
 
 export async function analyzeComplexity(args: { code: string; metrics?: string }): Promise<ToolResult> {
   const { code: complexityCode, metrics: complexityMetrics = 'all' } = args;
-  
+
+  // Check if this is Python code
+  if (PythonParser.isPythonCode(complexityCode)) {
+    try {
+      const pythonComplexity = await PythonParser.analyzeComplexity(complexityCode);
+
+      const totalComplexity = pythonComplexity.cyclomaticComplexity;
+      const issues: string[] = [];
+
+      if (totalComplexity > 10) issues.push('High complexity');
+      pythonComplexity.functions.forEach(f => {
+        if (f.complexity > 10) issues.push(`Function ${f.name}: complexity ${f.complexity}`);
+      });
+
+      return {
+        content: [{
+          type: 'text',
+          text: `Python Complexity: ${totalComplexity}\nFunctions: ${pythonComplexity.functions.length}\nClasses: ${pythonComplexity.classes.length}${issues.length ? '\nIssues: ' + issues.join(', ') : ''}`
+        }]
+      };
+    } catch (error) {
+      return {
+        content: [{
+          type: 'text',
+          text: `Python analysis error: ${error instanceof Error ? error.message : 'Unknown error'}`
+        }]
+      };
+    }
+  }
+
   const complexityAnalysis = {
     action: 'analyze_complexity',
     metrics: complexityMetrics,
@@ -233,17 +247,11 @@ export async function analyzeComplexity(args: { code: string; metrics?: string }
   
   complexityAnalysis.overallScore = Math.max(0, overallScore);
   complexityAnalysis.issues = issues;
-  complexityAnalysis.recommendations = issues.length > 0 ? [
-    'Consider breaking down complex functions into smaller ones',
-    'Reduce nesting depth using early returns or guard clauses',
-    'Extract complex logic into separate functions',
-    'Use more descriptive variable names',
-    'Add comments for complex logic'
-  ] : ['Code complexity is within acceptable ranges'];
-  
-  complexityAnalysis.status = 'success';
-  
+
   return {
-    content: [{ type: 'text', text: `Complexity Analysis:\n${JSON.stringify(complexityAnalysis, null, 2)}` }]
+    content: [{
+      type: 'text',
+      text: `Complexity: ${astCyclomatic}\nScore: ${complexityAnalysis.overallScore}${issues.length ? '\nIssues: ' + issues.join(', ') : ''}`
+    }]
   };
 }

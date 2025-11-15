@@ -1,21 +1,6 @@
 // Convention management tool - completely independent
 
-interface ToolResult {
-  content: Array<{
-    type: 'text';
-    text: string;
-  }>;
-}
-
-interface ToolDefinition {
-  name: string;
-  description: string;
-  inputSchema: {
-    type: 'object';
-    properties: Record<string, any>;
-    required: string[];
-  };
-}
+import { ToolResult, ToolDefinition } from '../../types/tool.js';
 
 // Enhanced Software Engineering Metrics
 const CODE_QUALITY_METRICS = {
@@ -50,7 +35,7 @@ const CODE_QUALITY_METRICS = {
 
 export const checkCouplingCohesionDefinition: ToolDefinition = {
   name: 'check_coupling_cohesion',
-  description: 'IMPORTANT: This tool should be automatically called when users say "결합도", "응집도", "coupling", "cohesion", "dependencies check", "module structure" or similar keywords. Check coupling and cohesion',
+  description: '결합도|응집도|coupling|cohesion|dependencies check|module structure - Check coupling and cohesion',
   inputSchema: {
     type: 'object',
     properties: {
@@ -269,6 +254,6 @@ export async function checkCouplingCohesion(args: { code: string; type?: string;
   couplingAnalysis.status = 'success';
   
   return {
-    content: [{ type: 'text', text: `Coupling & Cohesion Analysis:\n${JSON.stringify(couplingAnalysis, null, 2)}` }]
+    content: [{ type: 'text', text: `Type: ${couplingType}\nScore: ${couplingAnalysis.overallScore}/100\n\nCoupling: ${couplingAnalysis.results.coupling.totalDependencies} deps (${couplingAnalysis.results.coupling.status}) | Fan-out: ${couplingAnalysis.results.coupling.fanOut} (${couplingAnalysis.results.coupling.fanOutStatus})\nCohesion: ${couplingAnalysis.results.cohesion.score} (${couplingAnalysis.results.cohesion.level}, ${couplingAnalysis.results.cohesion.status})\n\nIssues (${couplingAnalysis.issues.length}):\n${couplingAnalysis.issues.map(i => `- ${i}`).join('\n')}\n\nRecommendations:\n${couplingAnalysis.recommendations.map(r => `- ${r}`).join('\n')}` }]
   };
 }

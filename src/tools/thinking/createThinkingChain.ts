@@ -1,25 +1,10 @@
 // Sequential thinking tool - completely independent
 
-interface ToolResult {
-  content: Array<{
-    type: 'text';
-    text: string;
-  }>;
-}
-
-interface ToolDefinition {
-  name: string;
-  description: string;
-  inputSchema: {
-    type: 'object';
-    properties: Record<string, any>;
-    required: string[];
-  };
-}
+import { ToolResult, ToolDefinition } from '../../types/tool.js';
 
 export const createThinkingChainDefinition: ToolDefinition = {
   name: 'create_thinking_chain',
-  description: 'IMPORTANT: This tool should be automatically called when users say "생각 과정", "사고 흐름", "연쇄적으로", "thinking process", "chain of thought", "reasoning chain" or similar keywords. Create sequential thinking chain',
+  description: '생각 과정|사고 흐름|연쇄적으로|thinking process|chain of thought|reasoning chain - Create sequential thinking chain',
   inputSchema: {
     type: 'object',
     properties: {
@@ -51,6 +36,6 @@ export async function createThinkingChain(args: { topic: string; steps?: number 
   };
   
   return {
-    content: [{ type: 'text', text: `Thinking Chain Created:\n${JSON.stringify(thinkingChain, null, 2)}` }]
+    content: [{ type: 'text', text: `Topic: ${topic}\nSteps: ${steps}\n\n${thinkingChain.chain.map(s => `${s.step}. ${s.title}\n   ${s.content}\n   Q: ${s.questions.join(', ')}`).join('\n\n')}` }]
   };
 }

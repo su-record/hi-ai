@@ -1,25 +1,10 @@
 // Planning tool - completely independent
 
-interface ToolResult {
-  content: Array<{
-    type: 'text';
-    text: string;
-  }>;
-}
-
-interface ToolDefinition {
-  name: string;
-  description: string;
-  inputSchema: {
-    type: 'object';
-    properties: Record<string, any>;
-    required: string[];
-  };
-}
+import { ToolResult, ToolDefinition } from '../../types/tool.js';
 
 export const generatePrdDefinition: ToolDefinition = {
   name: 'generate_prd',
-  description: 'IMPORTANT: This tool should be automatically called when users mention "PRD", "요구사항 문서", "제품 요구사항", "product requirements", "requirements document", "spec document" or similar terms. Generate Product Requirements Document',
+  description: 'PRD|요구사항 문서|제품 요구사항|product requirements|requirements document|spec document - Generate Product Requirements Document',
   inputSchema: {
     type: 'object',
     properties: {

@@ -1,21 +1,6 @@
 // UI Preview tool - ASCII art visualization before development
 
-interface ToolResult {
-  content: Array<{
-    type: 'text';
-    text: string;
-  }>;
-}
-
-interface ToolDefinition {
-  name: string;
-  description: string;
-  inputSchema: {
-    type: 'object';
-    properties: Record<string, any>;
-    required: string[];
-  };
-}
+import { ToolResult, ToolDefinition } from '../../types/tool.js';
 
 interface UIComponent {
   type: string;
@@ -27,7 +12,7 @@ interface UIComponent {
 
 export const previewUiAsciiDefinition: ToolDefinition = {
   name: 'preview_ui_ascii',
-  description: 'IMPORTANT: Auto-trigger when user requests UI/page development with keywords: "UI 만들어", "페이지 개발", "페이지 만들어", "컴포넌트 작성", "레이아웃", "화면 구성", "create page", "build UI", "design component", "make page", "develop page". Shows ASCII art preview for user confirmation before actual coding.',
+  description: 'UI 만들어|페이지 개발|페이지 만들어|컴포넌트 작성|레이아웃|화면 구성|create page|build UI|design component|make page|develop page - Preview UI before coding',
   inputSchema: {
     type: 'object',
     properties: {

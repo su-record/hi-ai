@@ -2,27 +2,11 @@
 
 import puppeteer from 'puppeteer-core';
 import { getBrowserLaunchOptions } from './browserUtils.js';
-
-interface ToolResult {
-  content: Array<{
-    type: 'text';
-    text: string;
-  }>;
-}
-
-interface ToolDefinition {
-  name: string;
-  description: string;
-  inputSchema: {
-    type: 'object';
-    properties: Record<string, any>;
-    required: string[];
-  };
-}
+import { ToolResult, ToolDefinition } from '../../types/tool.js';
 
 export const inspectNetworkRequestsDefinition: ToolDefinition = {
   name: 'inspect_network_requests',
-  description: 'IMPORTANT: This tool should be automatically called when users say "네트워크", "API 호출", "요청 확인", "network", "API calls", "check requests", "network traffic" or similar keywords. Inspect network requests',
+  description: '네트워크|API 호출|요청 확인|network|API calls|check requests|network traffic - Inspect network requests',
   inputSchema: {
     type: 'object',
     properties: {
@@ -164,8 +148,17 @@ export async function inspectNetworkRequests(args: { url: string; filterType?: s
     status: 'success'
   };
   
+  // Compact summary format
+  const failed = filteredRequests.filter(r => r.failed || (r.status !== undefined && r.status >= 400));
+  const errorSummary = failed.length > 0
+    ? `\nErrors: ${failed.slice(0, 3).map(r => `${r.method} ${new URL(r.url).pathname} (${r.status})`).join(', ')}${failed.length > 3 ? ` +${failed.length - 3}` : ''}`
+    : '';
+
   return {
-    content: [{ type: 'text', text: `Network Inspection Results:\n${JSON.stringify(networkInspectionResult, null, 2)}` }]
+    content: [{
+      type: 'text',
+      text: `${networkInspectionResult.summary.totalRequests} reqs | ${networkInspectionResult.summary.successful} OK, ${networkInspectionResult.summary.failed} fail | Avg: ${networkInspectionResult.summary.averageResponseTime.toFixed(0)}ms | ${(networkInspectionResult.summary.totalDataTransferred / 1024).toFixed(1)}KB${errorSummary}`
+    }]
   };
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';

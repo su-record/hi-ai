@@ -1,25 +1,10 @@
 // Prompt analysis tool - completely independent
 
-interface ToolResult {
-  content: Array<{
-    type: 'text';
-    text: string;
-  }>;
-}
-
-interface ToolDefinition {
-  name: string;
-  description: string;
-  inputSchema: {
-    type: 'object';
-    properties: Record<string, any>;
-    required: string[];
-  };
-}
+import { ToolResult, ToolDefinition } from '../../types/tool.js';
 
 export const analyzePromptDefinition: ToolDefinition = {
   name: 'analyze_prompt',
-  description: 'IMPORTANT: This tool should be automatically called when users ask "프롬프트 분석", "평가", "점수", "얼마나 좋은지", "analyze prompt", "rate this", "score", "how good", "prompt quality" or similar keywords. Analyze prompt quality',
+  description: '프롬프트 분석|평가|점수|얼마나 좋은지|analyze prompt|rate this|score|how good|prompt quality - Analyze prompt quality',
   inputSchema: {
     type: 'object',
     properties: {
@@ -184,6 +169,6 @@ export async function analyzePrompt(args: { prompt: string; criteria?: string[] 
   };
   
   return {
-    content: [{ type: 'text', text: `Prompt Analysis:\n${JSON.stringify(analysis, null, 2)}` }]
+    content: [{ type: 'text', text: `Score: ${analysis.totalScore}/10 (Grade: ${analysis.grade})\n\nScores:\n${Object.entries(analysis.scores).map(([k, v]) => `- ${k}: ${v}/10`).join('\n')}\n\nStrengths:\n${analysis.strengths.length > 0 ? analysis.strengths.join('\n') : 'None identified'}\n\nWeaknesses:\n${analysis.weaknesses.length > 0 ? analysis.weaknesses.join('\n') : 'None identified'}\n\nRecommendations:\n${analysis.recommendations.map(r => `- ${r}`).join('\n')}` }]
   };
 }

@@ -1,57 +1,11 @@
 // Memory management tool - completely independent
 
-import { promises as fs } from 'fs';
-import path from 'path';
-
-interface ToolResult {
-  content: Array<{
-    type: 'text';
-    text: string;
-  }>;
-}
-
-interface ToolDefinition {
-  name: string;
-  description: string;
-  inputSchema: {
-    type: 'object';
-    properties: Record<string, any>;
-    required: string[];
-  };
-}
-
-interface MemoryItem {
-  key: string;
-  value: string;
-  category: string;
-  timestamp: string;
-  lastAccessed: string;
-}
-
-const MEMORY_DIR = path.join(process.cwd(), 'memories');
-const MEMORY_FILE = path.join(MEMORY_DIR, 'memories.json');
-
-async function ensureMemoryDir() {
-  try {
-    await fs.access(MEMORY_DIR);
-  } catch {
-    await fs.mkdir(MEMORY_DIR, { recursive: true });
-  }
-}
-
-async function loadMemories(): Promise<MemoryItem[]> {
-  try {
-    await ensureMemoryDir();
-    const data = await fs.readFile(MEMORY_FILE, 'utf-8');
-    return JSON.parse(data);
-  } catch {
-    return [];
-  }
-}
+import { MemoryManager, MemoryItem } from '../../lib/MemoryManager.js';
+import { ToolResult, ToolDefinition } from '../../types/tool.js';
 
 export const prioritizeMemoryDefinition: ToolDefinition = {
   name: 'prioritize_memory',
-  description: 'IMPORTANT: This tool should be automatically called when users say "중요한 거", "우선순위", "prioritize", "important ones", "what matters", "priority" or similar keywords. Prioritize memories by importance',
+  description: '중요한 거|우선순위|prioritize|important|what matters|priority - Prioritize memories by importance',
   inputSchema: {
     type: 'object',
     properties: {
@@ -65,118 +19,106 @@ export const prioritizeMemoryDefinition: ToolDefinition = {
   }
 };
 
-export async function prioritizeMemory(args: { 
-  currentTask: string; 
-  criticalDecisions?: string[]; 
-  codeChanges?: string[]; 
-  blockers?: string[]; 
-  nextSteps?: string[] 
+export async function prioritizeMemory(args: {
+  currentTask: string;
+  criticalDecisions?: string[];
+  codeChanges?: string[];
+  blockers?: string[];
+  nextSteps?: string[]
 }): Promise<ToolResult> {
   const { currentTask, criticalDecisions = [], codeChanges = [], blockers = [], nextSteps = [] } = args;
-  
+
   try {
-    const allMemories = await loadMemories();
-    const prioritizedMemories = [];
-    
+    const mm = MemoryManager.getInstance();
+    const allMemories = mm.list();
+    const prioritizedMemories: Array<{ memory: MemoryItem; priority: number; reason: string }> = [];
+
     for (const memory of allMemories) {
       let priority = 0;
       let reason = '';
-      
+
       // Analyze importance based on content
       if (memory.value.includes('error') || memory.value.includes('Error')) {
         priority = 0.9;
-        reason = 'Contains error information';
+        reason = 'error info';
       } else if (memory.value.includes('decision') || memory.value.includes('Decision')) {
         priority = 0.8;
-        reason = 'Contains decision information';
+        reason = 'decision';
       } else if (memory.value.includes('code') || memory.value.includes('function')) {
         priority = 0.7;
-        reason = 'Contains code-related information';
+        reason = 'code-related';
       } else if (memory.category === 'context') {
         priority = 0.6;
-        reason = 'Context information';
+        reason = 'context';
       } else if (memory.category === 'project') {
         priority = 0.7;
-        reason = 'Project-related information';
+        reason = 'project';
       } else {
         priority = 0.5;
-        reason = 'General information';
+        reason = 'general';
       }
-      
+
       // Boost priority for memories related to current task
       if (memory.value.toLowerCase().includes(currentTask.toLowerCase())) {
         priority += 0.2;
-        reason += ' (related to current task)';
+        reason += ' +task';
       }
-      
+
       // Boost priority for critical decisions
       for (const decision of criticalDecisions) {
         if (memory.value.toLowerCase().includes(decision.toLowerCase())) {
           priority += 0.15;
-          reason += ' (critical decision)';
+          reason += ' +critical';
           break;
         }
       }
-      
+
       // Boost priority for code changes
       for (const change of codeChanges) {
         if (memory.value.toLowerCase().includes(change.toLowerCase())) {
           priority += 0.1;
-          reason += ' (code change)';
+          reason += ' +change';
           break;
         }
       }
-      
+
       // Boost priority for blockers
       for (const blocker of blockers) {
         if (memory.value.toLowerCase().includes(blocker.toLowerCase())) {
           priority += 0.25;
-          reason += ' (blocker/issue)';
+          reason += ' +blocker';
           break;
         }
       }
-      
+
       // Cap priority at 1.0
       priority = Math.min(1.0, priority);
-      
+
       if (priority >= 0.6) {
-        prioritizedMemories.push({
-          memory,
-          priority,
-          reason
-        });
+        prioritizedMemories.push({ memory, priority, reason });
+
+        // Update priority in database
+        mm.setPriority(memory.key, Math.floor(priority * 100));
       }
     }
-    
+
     const sortedMemories = prioritizedMemories
       .sort((a, b) => b.priority - a.priority)
       .slice(0, 20);
-    
-    const priorityResult = {
-      action: 'prioritize_memory',
-      currentTask,
-      criticalDecisions,
-      codeChanges,
-      blockers,
-      nextSteps,
-      prioritized: sortedMemories.map(pm => ({
-        key: pm.memory.key,
-        category: pm.memory.category,
-        priority: pm.priority,
-        reason: pm.reason,
-        timestamp: pm.memory.timestamp,
-        preview: pm.memory.value.substring(0, 100) + (pm.memory.value.length > 100 ? '...' : '')
-      })),
-      total: sortedMemories.length,
-      status: 'success'
-    };
-    
+
+    const resultList = sortedMemories.map(pm =>
+      `• [${(pm.priority * 100).toFixed(0)}%] ${pm.memory.key} (${pm.reason}): ${pm.memory.value.substring(0, 60)}${pm.memory.value.length > 60 ? '...' : ''}`
+    ).join('\n');
+
     return {
-      content: [{ type: 'text', text: `Memory prioritization completed:\n${JSON.stringify(priorityResult, null, 2)}` }]
+      content: [{
+        type: 'text',
+        text: `✓ Prioritized ${sortedMemories.length} memories for "${currentTask}":\n${resultList || 'None'}`
+      }]
     };
   } catch (error) {
     return {
-      content: [{ type: 'text', text: `Error prioritizing memory: ${error instanceof Error ? error.message : 'Unknown error'}` }]
+      content: [{ type: 'text', text: `✗ Error: ${error instanceof Error ? error.message : 'Unknown error'}` }]
     };
   }
 }

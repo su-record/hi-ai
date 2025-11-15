@@ -1,25 +1,10 @@
 // Convention management tool - completely independent
 
-interface ToolResult {
-  content: Array<{
-    type: 'text';
-    text: string;
-  }>;
-}
-
-interface ToolDefinition {
-  name: string;
-  description: string;
-  inputSchema: {
-    type: 'object';
-    properties: Record<string, any>;
-    required: string[];
-  };
-}
+import { ToolResult, ToolDefinition } from '../../types/tool.js';
 
 export const suggestImprovementsDefinition: ToolDefinition = {
   name: 'suggest_improvements',
-  description: 'IMPORTANT: This tool should be automatically called when users say "개선", "더 좋게", "리팩토링", "improve", "make better", "refactor", "optimize", "enhance code" or similar keywords. Suggest improvements',
+  description: '개선|더 좋게|리팩토링|improve|make better|refactor|optimize|enhance code - Suggest improvements',
   inputSchema: {
     type: 'object',
     properties: {
@@ -289,7 +274,8 @@ export async function suggestImprovements(args: { code: string; focus?: string; 
     status: 'success'
   };
   
+  const topSuggestions = filteredSuggestions.slice(0, 8);
   return {
-    content: [{ type: 'text', text: `Code Improvement Suggestions:\n${JSON.stringify(improvementResult, null, 2)}` }]
+    content: [{ type: 'text', text: `Focus: ${focus}\nScore: ${improvementResult.overallScore}/100\nSuggestions: ${improvementResult.summary.total} (${improvementResult.summary.critical}C ${improvementResult.summary.high}H ${improvementResult.summary.medium}M ${improvementResult.summary.low}L)\n\n${topSuggestions.map(s => `[${s.priority.toUpperCase()}] ${s.category}\n  Issue: ${s.issue}\n  Fix: ${s.suggestion}`).join('\n\n')}${filteredSuggestions.length > 8 ? `\n\n... ${filteredSuggestions.length - 8} more suggestions` : ''}` }]
   };
 }

@@ -1,21 +1,6 @@
 // Convention management tool - completely independent
 
-interface ToolResult {
-  content: Array<{
-    type: 'text';
-    text: string;
-  }>;
-}
-
-interface ToolDefinition {
-  name: string;
-  description: string;
-  inputSchema: {
-    type: 'object';
-    properties: Record<string, any>;
-    required: string[];
-  };
-}
+import { ToolResult, ToolDefinition } from '../../types/tool.js';
 
 // Enhanced Software Engineering Metrics
 const CODE_QUALITY_METRICS = {
@@ -50,7 +35,7 @@ const CODE_QUALITY_METRICS = {
 
 export const validateCodeQualityDefinition: ToolDefinition = {
   name: 'validate_code_quality',
-  description: 'IMPORTANT: This tool should be automatically called when users say "품질", "리뷰", "검사", "quality", "review code", "check quality", "validate", "코드 리뷰" or similar keywords. Validate code quality',
+  description: '품질|리뷰|검사|quality|review code|check quality|validate|코드 리뷰 - Validate code quality',
   inputSchema: {
     type: 'object',
     properties: {
@@ -201,7 +186,8 @@ export async function validateCodeQuality(args: { code: string; type?: string; s
     status: 'success'
   };
   
+  const topIssues = qualityIssues.slice(0, 8);
   return {
-    content: [{ type: 'text', text: `Code Quality Validation:\n${JSON.stringify(validationResult, null, 2)}` }]
+    content: [{ type: 'text', text: `Type: ${validateType}\nScore: ${finalScore}/100 (Grade: ${validationResult.grade})\nMetrics: Lines=${validationResult.metrics.lines}, Complexity=${validationResult.metrics.complexity}, Nesting=${validationResult.metrics.nesting}\n\nIssues (${qualityIssues.length}):\n${topIssues.map(i => `[${i.severity.toUpperCase()}] ${i.type}: ${i.message}`).join('\n')}${qualityIssues.length > 8 ? `\n... ${qualityIssues.length - 8} more issues` : ''}\n\nDeductions: -${qualityScore.deductions.reduce((sum, d) => sum + d.points, 0)} pts (${qualityScore.deductions.map(d => `${d.reason}: -${d.points}`).join(', ')})` }]
   };
 }

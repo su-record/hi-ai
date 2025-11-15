@@ -2,23 +2,7 @@
 
 import { promises as fs } from 'fs';
 import path from 'path';
-
-interface ToolResult {
-  content: Array<{
-    type: 'text';
-    text: string;
-  }>;
-}
-
-interface ToolDefinition {
-  name: string;
-  description: string;
-  inputSchema: {
-    type: 'object';
-    properties: Record<string, any>;
-    required: string[];
-  };
-}
+import { ToolResult, ToolDefinition } from '../../types/tool.js';
 
 interface CodingGuide {
   name: string;
@@ -58,7 +42,7 @@ async function findGuide(name: string): Promise<CodingGuide | undefined> {
 
 export const getCodingGuideDefinition: ToolDefinition = {
   name: 'get_coding_guide',
-  description: 'IMPORTANT: This tool should be automatically called when users say "가이드", "규칙", "컨벤션", "guide", "rules", "convention", "standards", "best practices" or similar keywords. Get coding guide',
+  description: '가이드|규칙|컨벤션|guide|rules|convention|standards|best practices - Get coding guide',
   inputSchema: {
     type: 'object',
     properties: {
@@ -76,11 +60,11 @@ export async function getCodingGuide(args: { name: string; category?: string }):
     const guide = await findGuide(guideName);
     if (guide) {
       return {
-        content: [{ type: 'text', text: `CODING GUIDE: ${guide.name}\n\nCategory: ${guide.category}\nDescription: ${guide.description}\n\nGUIDELINES TO FOLLOW:\n${guide.content}\n\nTags: ${guide.tags.join(', ')}\nLast Updated: ${guide.lastUpdated}` }]
+        content: [{ type: 'text', text: `Guide: ${guide.name}\nCategory: ${guide.category}\n\n${guide.content}\n\nTags: ${guide.tags.join(', ')} | Updated: ${guide.lastUpdated}` }]
       };
     } else {
       return {
-        content: [{ type: 'text', text: `Coding guide not found: "${guideName}". Use list_coding_guides to see available guides.` }]
+        content: [{ type: 'text', text: `Guide not found: "${guideName}". Use list_coding_guides to see available guides.` }]
       };
     }
   } catch (error) {

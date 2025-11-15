@@ -1,21 +1,6 @@
 // Planning tool - completely independent
 
-interface ToolResult {
-  content: Array<{
-    type: 'text';
-    text: string;
-  }>;
-}
-
-interface ToolDefinition {
-  name: string;
-  description: string;
-  inputSchema: {
-    type: 'object';
-    properties: Record<string, any>;
-    required: string[];
-  };
-}
+import { ToolResult, ToolDefinition } from '../../types/tool.js';
 
 interface UserStory {
   id: string;
@@ -32,7 +17,7 @@ interface UserStory {
 
 export const createUserStoriesDefinition: ToolDefinition = {
   name: 'create_user_stories',
-  description: 'IMPORTANT: This tool should be automatically called when users mention "스토리", "사용자 스토리", "user story", "user stories", "as a user" or similar terms. Generate user stories from requirements',
+  description: '스토리|사용자 스토리|user story|user stories|as a user - Generate user stories from requirements',
   inputSchema: {
     type: 'object',
     properties: {

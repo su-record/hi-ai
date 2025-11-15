@@ -1,21 +1,6 @@
 // Planning tool - completely independent
 
-interface ToolResult {
-  content: Array<{
-    type: 'text';
-    text: string;
-  }>;
-}
-
-interface ToolDefinition {
-  name: string;
-  description: string;
-  inputSchema: {
-    type: 'object';
-    properties: Record<string, any>;
-    required: string[];
-  };
-}
+import { ToolResult, ToolDefinition } from '../../types/tool.js';
 
 interface Requirement {
   id: string;
@@ -32,7 +17,7 @@ interface Requirement {
 
 export const analyzeRequirementsDefinition: ToolDefinition = {
   name: 'analyze_requirements',
-  description: 'IMPORTANT: This tool should be automatically called when users say "요구사항 분석", "필요한 것들", "requirements analysis", "what we need", "analyze requirements", "필수 기능" or similar keywords. Analyze project requirements',
+  description: '요구사항 분석|필요한 것들|requirements analysis|what we need|analyze requirements|필수 기능 - Analyze project requirements',
   inputSchema: {
     type: 'object',
     properties: {

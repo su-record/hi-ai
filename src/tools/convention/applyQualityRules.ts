@@ -1,21 +1,6 @@
 // Convention management tool - completely independent
 
-interface ToolResult {
-  content: Array<{
-    type: 'text';
-    text: string;
-  }>;
-}
-
-interface ToolDefinition {
-  name: string;
-  description: string;
-  inputSchema: {
-    type: 'object';
-    properties: Record<string, any>;
-    required: string[];
-  };
-}
+import { ToolResult, ToolDefinition } from '../../types/tool.js';
 
 // Code Quality Standards
 const QUALITY_RULES = {
@@ -52,7 +37,7 @@ const QUALITY_RULES = {
 
 export const applyQualityRulesDefinition: ToolDefinition = {
   name: 'apply_quality_rules',
-  description: 'IMPORTANT: This tool should be automatically called when users say "규칙 적용", "표준 적용", "apply rules", "apply standards", "follow conventions", "적용해" or similar keywords. Apply quality rules',
+  description: '규칙 적용|표준 적용|apply rules|apply standards|follow conventions|적용해 - Apply quality rules',
   inputSchema: {
     type: 'object',
     properties: {
@@ -119,7 +104,8 @@ export async function applyQualityRules(args: { scope: string; language?: string
     status: 'success'
   };
   
+  const rulesSummary = applicableRules.map(r => `${r.category}: ${Array.isArray(r.rules) ? r.rules.length + ' rules' : Object.keys(r.rules).length + ' items'}`).join(', ');
   return {
-    content: [{ type: 'text', text: `Code Quality Rules Applied:\n${JSON.stringify(qualityRulesResult, null, 2)}` }]
+    content: [{ type: 'text', text: `Scope: ${scope}\nLanguage: ${contextLanguage}\nRules Applied: ${rulesSummary}\n\nAsync States: ${QUALITY_RULES.ASYNC_STATES.join(', ')}\n\nState Mgmt:\n${Object.entries(QUALITY_RULES.STATE_MANAGEMENT).map(([k, v]) => `- ${k}: ${v}`).join('\n')}` }]
   };
 }

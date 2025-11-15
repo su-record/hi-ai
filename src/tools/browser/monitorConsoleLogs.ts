@@ -2,27 +2,11 @@
 
 import puppeteer from 'puppeteer-core';
 import { getBrowserLaunchOptions } from './browserUtils.js';
-
-interface ToolResult {
-  content: Array<{
-    type: 'text';
-    text: string;
-  }>;
-}
-
-interface ToolDefinition {
-  name: string;
-  description: string;
-  inputSchema: {
-    type: 'object';
-    properties: Record<string, any>;
-    required: string[];
-  };
-}
+import { ToolResult, ToolDefinition } from '../../types/tool.js';
 
 export const monitorConsoleLogsDefinition: ToolDefinition = {
   name: 'monitor_console_logs',
-  description: 'IMPORTANT: This tool should be automatically called when users say "콘솔 로그", "에러 확인", "로그 봐줘", "console", "check logs", "debug output", "console errors" or similar keywords. Monitor browser console',
+  description: '콘솔 로그|에러 확인|로그 봐줘|console|check logs|debug output|console errors - Monitor browser console',
   inputSchema: {
     type: 'object',
     properties: {
@@ -94,8 +78,21 @@ export async function monitorConsoleLogs(args: { url: string; logLevel?: string;
       status: 'success'
     };
     
+    // Compact summary with errors only
+    const errors = logs.filter(l => l.level === 'error');
+    const warnings = logs.filter(l => l.level === 'warn');
+    const errorSummary = errors.length > 0
+      ? `\nErrors: ${errors.slice(0, 3).map(l => l.message.substring(0, 50)).join(', ')}${errors.length > 3 ? ` +${errors.length - 3}` : ''}`
+      : '';
+    const warnSummary = warnings.length > 0 && errors.length === 0
+      ? `\nWarnings: ${warnings.slice(0, 3).map(l => l.message.substring(0, 50)).join(', ')}${warnings.length > 3 ? ` +${warnings.length - 3}` : ''}`
+      : '';
+
     return {
-      content: [{ type: 'text', text: `Console Monitor Results:\n${JSON.stringify(consoleMonitorResult, null, 2)}` }]
+      content: [{
+        type: 'text',
+        text: `${logs.length} logs | ${consoleMonitorResult.summary.errors}E ${consoleMonitorResult.summary.warnings}W ${consoleMonitorResult.summary.infos}I | ${duration}s${errorSummary}${warnSummary}`
+      }]
     };
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';

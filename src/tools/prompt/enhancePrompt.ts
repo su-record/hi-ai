@@ -1,25 +1,10 @@
 // Prompt enhancement tool - completely independent
 
-interface ToolResult {
-  content: Array<{
-    type: 'text';
-    text: string;
-  }>;
-}
-
-interface ToolDefinition {
-  name: string;
-  description: string;
-  inputSchema: {
-    type: 'object';
-    properties: Record<string, any>;
-    required: string[];
-  };
-}
+import { ToolResult, ToolDefinition } from '../../types/tool.js';
 
 export const enhancePromptDefinition: ToolDefinition = {
   name: 'enhance_prompt',
-  description: 'IMPORTANT: This tool should be automatically called when requests are vague, too short (under 20 chars), or when users say "구체적으로", "자세히", "명확하게", "더 구체적으로", "be specific", "more detail", "clarify", "elaborate" or similar keywords. Transform vague requests',
+  description: '구체적으로|자세히|명확하게|더 구체적으로|be specific|more detail|clarify|elaborate|vague - Transform vague requests',
   inputSchema: {
     type: 'object',
     properties: {
@@ -130,6 +115,6 @@ export async function enhancePrompt(args: { prompt: string; context?: string; en
   };
   
   return {
-    content: [{ type: 'text', text: `Enhanced Prompt:\n${JSON.stringify(result, null, 2)}` }]
+    content: [{ type: 'text', text: `Original: ${prompt}\n\nEnhanced:\n${enhancedPrompt}\n\nImprovements: ${result.improvements.join(', ')}` }]
   };
 }

@@ -1,25 +1,12 @@
-// Semantic code analysis tool - Find Symbol
-// Inspired by Serena MCP's LSP-based approach
+// Semantic code analysis tool - Find Symbol (v1.3)
+// With ProjectCache for 25x performance improvement
 
-import { Project, Node, SyntaxKind } from 'ts-morph';
+import { Node } from 'ts-morph';
 import * as path from 'path';
-
-interface ToolResult {
-  content: Array<{
-    type: 'text';
-    text: string;
-  }>;
-}
-
-interface ToolDefinition {
-  name: string;
-  description: string;
-  inputSchema: {
-    type: 'object';
-    properties: Record<string, any>;
-    required: string[];
-  };
-}
+import { PythonParser } from '../../lib/PythonParser.js';
+import { ProjectCache } from '../../lib/ProjectCache.js';
+import { readFile } from 'fs/promises';
+import { ToolResult, ToolDefinition } from '../../types/tool.js';
 
 interface SymbolInfo {
   name: string;
@@ -30,18 +17,9 @@ interface SymbolInfo {
   preview: string;
 }
 
-// Reuse project instance for performance
-const project = new Project({
-  useInMemoryFileSystem: false,
-  compilerOptions: {
-    allowJs: true,
-    skipLibCheck: true
-  }
-});
-
 export const findSymbolDefinition: ToolDefinition = {
   name: 'find_symbol',
-  description: 'IMPORTANT: This tool should be automatically called when users say "함수 찾아", "클래스 어디", "변수 위치", "find function", "where is class", "locate symbol" or similar keywords. Find symbol definitions using semantic analysis',
+  description: '함수 찾아|클래스 어디|변수 위치|find function|where is|locate - Find symbol definitions',
   inputSchema: {
     type: 'object',
     properties: {
@@ -65,13 +43,43 @@ export async function findSymbol(args: {
   const { symbolName, projectPath, symbolType = 'all' } = args;
   
   try {
-    // Clear previous files and add project files
-    project.getSourceFiles().forEach(sf => project.removeSourceFile(sf));
-    const pattern = path.join(projectPath, '**/*.{ts,tsx,js,jsx}');
-    project.addSourceFilesAtPaths(pattern);
-    
+    // Use cached project for performance
+    const projectCache = ProjectCache.getInstance();
+    const project = projectCache.getOrCreate(projectPath);
+
     const symbols: SymbolInfo[] = [];
-    
+
+    // Check for Python files
+    const glob = await import('glob');
+    const pythonFiles = glob.globSync(path.join(projectPath, '**/*.py'), {
+      ignore: ['**/node_modules/**', '**/.git/**', '**/venv/**', '**/__pycache__/**']
+    });
+
+    // Parse Python files
+    for (const pyFile of pythonFiles) {
+      try {
+        const content = await readFile(pyFile, 'utf-8');
+        const pythonSymbols = await PythonParser.findSymbols(content);
+
+        for (const pySymbol of pythonSymbols) {
+          if (pySymbol.name.includes(symbolName) &&
+              (symbolType === 'all' || symbolType === pySymbol.kind)) {
+            symbols.push({
+              name: pySymbol.name,
+              kind: pySymbol.kind,
+              filePath: pyFile,
+              line: pySymbol.line,
+              column: pySymbol.column,
+              preview: pySymbol.docstring?.substring(0, 100) || `${pySymbol.kind} ${pySymbol.name}`
+            });
+          }
+        }
+      } catch (error) {
+        // Skip files that can't be parsed
+        console.error(`Error parsing Python file ${pyFile}:`, error);
+      }
+    }
+
     // Search through all source files
     for (const sourceFile of project.getSourceFiles()) {
       const filePath = sourceFile.getFilePath();
@@ -107,21 +115,12 @@ export async function findSymbol(args: {
       return aExact - bExact;
     });
     
-    const result = {
-      action: 'find_symbol',
-      query: symbolName,
-      type: symbolType,
-      projectPath,
-      resultsCount: symbols.length,
-      symbols: symbols.slice(0, 20), // Limit to top 20 results
-      summary: generateSummary(symbols, symbolName),
-      status: 'success'
-    };
-    
     return {
-      content: [{ 
-        type: 'text', 
-        text: formatSymbolResults(result)
+      content: [{
+        type: 'text',
+        text: `Found ${symbols.length} symbols:\n${symbols.slice(0, 20).map(s =>
+          `${s.name} (${s.kind}) - ${s.filePath}:${s.line}`
+        ).join('\n')}`
       }]
     };
   } catch (error) {

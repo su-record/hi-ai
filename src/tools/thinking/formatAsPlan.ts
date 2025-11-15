@@ -1,25 +1,10 @@
 // Sequential thinking tool - completely independent
 
-interface ToolResult {
-  content: Array<{
-    type: 'text';
-    text: string;
-  }>;
-}
-
-interface ToolDefinition {
-  name: string;
-  description: string;
-  inputSchema: {
-    type: 'object';
-    properties: Record<string, any>;
-    required: string[];
-  };
-}
+import { ToolResult, ToolDefinition } from '../../types/tool.js';
 
 export const formatAsPlanDefinition: ToolDefinition = {
   name: 'format_as_plan',
-  description: 'IMPORTANT: This tool should be automatically called when users say "계획으로", "정리해줘", "체크리스트", "format as plan", "make a plan", "organize this", "checklist" or similar keywords. Format content into clear plans',
+  description: '계획으로|정리해줘|체크리스트|format as plan|make a plan|organize this|checklist - Format content into clear plans',
   inputSchema: {
     type: 'object',
     properties: {
@@ -86,6 +71,6 @@ export async function formatAsPlan(args: { content: string; priority?: string; i
   };
   
   return {
-    content: [{ type: 'text', text: `Formatted Plan:\n\n${planResult.formattedPlan}\n\nTotal estimated time: ${planResult.totalEstimatedTime}\nSteps breakdown: ${planResult.breakdown.high} high, ${planResult.breakdown.medium} medium, ${planResult.breakdown.low} low priority` }]
+    content: [{ type: 'text', text: `${planResult.formattedPlan}\n\nTotal: ${planResult.totalEstimatedTime} | Priority: ${planResult.breakdown.high}H ${planResult.breakdown.medium}M ${planResult.breakdown.low}L` }]
   };
 }

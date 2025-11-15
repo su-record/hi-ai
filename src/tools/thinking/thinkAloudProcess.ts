@@ -1,25 +1,10 @@
 // Sequential thinking tool - completely independent
 
-interface ToolResult {
-  content: Array<{
-    type: 'text';
-    text: string;
-  }>;
-}
-
-interface ToolDefinition {
-  name: string;
-  description: string;
-  inputSchema: {
-    type: 'object';
-    properties: Record<string, any>;
-    required: string[];
-  };
-}
+import { ToolResult, ToolDefinition } from '../../types/tool.js';
 
 export const thinkAloudProcessDefinition: ToolDefinition = {
   name: 'think_aloud_process',
-  description: 'IMPORTANT: This tool should be automatically called when users say "생각해봐", "고민해봐", "어떻게 생각해", "think about it", "let me think", "reasoning" or similar keywords. Generate think-aloud reasoning process',
+  description: '생각해봐|고민해봐|어떻게 생각해|think about it|let me think|reasoning - Generate think-aloud reasoning process',
   inputSchema: {
     type: 'object',
     properties: {
@@ -89,6 +74,6 @@ export async function thinkAloudProcess(args: { scenario: string; perspective?: 
   };
   
   return {
-    content: [{ type: 'text', text: `Think-Aloud Process:\n${JSON.stringify(thinkAloudProcess, null, 2)}` }]
+    content: [{ type: 'text', text: `Scenario: ${scenario}\nPerspective: ${perspective}\nThoughts: ${thoughtCount}\n${thinkAloudProcess.thoughtProcess.map((t, i) => `${i+1}. ${t.thought} (confidence: ${t.confidence}%)`).join('\n')}\n\nNext: ${thinkAloudProcess.metacognition.nextSteps.join(', ')}` }]
   };
 }

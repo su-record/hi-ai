@@ -36,7 +36,7 @@ interface SubProblem {
 
 export const breakDownProblemDefinition: ToolDefinition = {
   name: 'break_down_problem',
-  description: 'IMPORTANT: This tool should be automatically called when users say "나눠서", "단계별로", "세분화", "break down", "divide", "split into parts" or similar keywords. Break complex problems into sub-problems',
+  description: '나눠서|단계별로|세분화|break down|divide|split into parts - Break complex problems into sub-problems',
   inputSchema: {
     type: 'object',
     properties: {
@@ -160,7 +160,12 @@ export async function breakDownProblem(args: { problem: string; maxDepth?: numbe
     status: 'success'
   };
   
+  const formatSubProblems = (subs: SubProblem[] | null, indent = 0): string => {
+    if (!subs) return '';
+    return subs.map(s => `${'  '.repeat(indent)}- ${s.title} (${s.complexity}, ${s.priority})${s.subProblems ? '\n' + formatSubProblems(s.subProblems, indent + 1) : ''}`).join('\n');
+  };
+
   return {
-    content: [{ type: 'text', text: `Problem Breakdown:\n${JSON.stringify(problemBreakdown, null, 2)}` }]
+    content: [{ type: 'text', text: `Problem: ${breakdownProblem}\nApproach: ${approach}\nMax Depth: ${maxDepth}\n\nBreakdown:\n${formatSubProblems(problemBreakdown.breakdown.rootProblem.subProblems)}\n\nExecution: ${problemBreakdown.executionOrder.join(' → ')}` }]
   };
 }

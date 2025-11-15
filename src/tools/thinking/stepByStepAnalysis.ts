@@ -1,25 +1,10 @@
 // Sequential thinking tool - completely independent
 
-interface ToolResult {
-  content: Array<{
-    type: 'text';
-    text: string;
-  }>;
-}
-
-interface ToolDefinition {
-  name: string;
-  description: string;
-  inputSchema: {
-    type: 'object';
-    properties: Record<string, any>;
-    required: string[];
-  };
-}
+import { ToolResult, ToolDefinition } from '../../types/tool.js';
 
 export const stepByStepAnalysisDefinition: ToolDefinition = {
   name: 'step_by_step_analysis',
-  description: 'IMPORTANT: This tool should be automatically called when users say "단계별", "차근차근", "하나씩", "step by step", "one by one", "gradually" or similar keywords. Perform detailed step-by-step analysis',
+  description: '단계별|차근차근|하나씩|step by step|one by one|gradually - Perform detailed step-by-step analysis',
   inputSchema: {
     type: 'object',
     properties: {
@@ -70,6 +55,6 @@ export async function stepByStepAnalysis(args: { task: string; context?: string;
   };
   
   return {
-    content: [{ type: 'text', text: `Step-by-Step Analysis:\n${JSON.stringify(stepAnalysis, null, 2)}` }]
+    content: [{ type: 'text', text: `Task: ${task}\nDetail: ${detailLevel}\nSteps: ${stepCount}\n\n${stepAnalysis.steps.map(s => `Step ${s.stepNumber}: ${s.title}\n  Time: ${s.estimatedTime}\n  Actions: ${s.actions.join(', ')}\n  Checkpoints: ${s.checkpoints.join(', ')}`).join('\n\n')}\n\nTotal Time: ${stepAnalysis.summary.estimatedTotalTime} | Complexity: ${stepAnalysis.summary.complexity}` }]
   };
 }

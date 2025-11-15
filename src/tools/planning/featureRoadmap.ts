@@ -1,21 +1,6 @@
 // Planning tool - completely independent
 
-interface ToolResult {
-  content: Array<{
-    type: 'text';
-    text: string;
-  }>;
-}
-
-interface ToolDefinition {
-  name: string;
-  description: string;
-  inputSchema: {
-    type: 'object';
-    properties: Record<string, any>;
-    required: string[];
-  };
-}
+import { ToolResult, ToolDefinition } from '../../types/tool.js';
 
 interface RoadmapItem {
   id: string;
@@ -40,7 +25,7 @@ interface RoadmapPhase {
 
 export const featureRoadmapDefinition: ToolDefinition = {
   name: 'feature_roadmap',
-  description: 'IMPORTANT: This tool should be automatically called when users say "로드맵", "일정", "계획표", "roadmap", "timeline", "project plan", "development schedule" or similar keywords. Generate development roadmap',
+  description: '로드맵|일정|계획표|roadmap|timeline|project plan|development schedule - Generate development roadmap',
   inputSchema: {
     type: 'object',
     properties: {

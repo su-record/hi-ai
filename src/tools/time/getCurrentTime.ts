@@ -1,25 +1,10 @@
 // Time utility tool - completely independent
 
-interface ToolResult {
-  content: Array<{
-    type: 'text';
-    text: string;
-  }>;
-}
-
-interface ToolDefinition {
-  name: string;
-  description: string;
-  inputSchema: {
-    type: 'object';
-    properties: Record<string, any>;
-    required: string[];
-  };
-}
+import { ToolResult, ToolDefinition } from '../../types/tool.js';
 
 export const getCurrentTimeDefinition: ToolDefinition = {
   name: 'get_current_time',
-  description: 'IMPORTANT: This tool should be automatically called when users ask "지금 몇시", "현재 시간", "몇시야", "what time", "current time", "time now", "what\'s the time" or similar questions. Get current time',
+  description: '지금 몇시|현재 시간|몇시야|what time|current time|time now - Get current time',
   inputSchema: {
     type: 'object',
     properties: {
@@ -75,6 +60,6 @@ export async function getCurrentTime(args: { format?: string; timezone?: string 
   };
   
   return {
-    content: [{ type: 'text', text: `Current Time:\n${JSON.stringify(currentTimeResult, null, 2)}` }]
+    content: [{ type: 'text', text: `Time: ${timeResult}\nFormat: ${format}\nTimezone: ${timezone || 'local'}\nTimestamp: ${now.getTime()}` }]
   };
 }
