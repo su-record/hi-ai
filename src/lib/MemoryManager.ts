@@ -30,7 +30,10 @@ export class MemoryManager {
       try {
         require('fs').mkdirSync(memoryDir, { recursive: true });
       } catch (error) {
-        // Directory already exists
+        const nodeError = error as NodeJS.ErrnoException;
+        if (nodeError.code !== 'EEXIST') {
+          throw new Error(`Failed to create memory directory: ${nodeError.message}`);
+        }
       }
     }
 
@@ -69,43 +72,82 @@ export class MemoryManager {
     `);
   }
 
+  /**
+   * Auto-migrate from JSON to SQLite database
+   */
   private migrateFromJSON(): void {
-    // Auto-migrate from old JSON file if exists
-    const jsonPath = path.join(path.dirname(this.dbPath), 'memories.json');
+    const jsonPath = this.getJSONPath();
+    const memories = this.loadJSONMemories(jsonPath);
 
+    if (memories.length === 0) return;
+
+    this.importMemories(memories);
+    this.backupAndCleanup(jsonPath, memories.length);
+  }
+
+  /**
+   * Get JSON file path
+   */
+  private getJSONPath(): string {
+    return path.join(path.dirname(this.dbPath), 'memories.json');
+  }
+
+  /**
+   * Load memories from JSON file
+   */
+  private loadJSONMemories(jsonPath: string): MemoryItem[] {
     try {
       const jsonData = require('fs').readFileSync(jsonPath, 'utf-8');
-      const memories: MemoryItem[] = JSON.parse(jsonData);
-
-      const insert = this.db.prepare(`
-        INSERT OR REPLACE INTO memories (key, value, category, timestamp, lastAccessed, priority)
-        VALUES (?, ?, ?, ?, ?, ?)
-      `);
-
-      const insertMany = this.db.transaction((items: MemoryItem[]) => {
-        for (const item of items) {
-          insert.run(
-            item.key,
-            item.value,
-            item.category || 'general',
-            item.timestamp,
-            item.lastAccessed,
-            item.priority || 0
-          );
-        }
-      });
-
-      insertMany(memories);
-
-      // Backup and remove old JSON file
-      require('fs').renameSync(jsonPath, jsonPath + '.backup');
-      console.log(`Migrated ${memories.length} memories from JSON to SQLite`);
+      return JSON.parse(jsonData);
     } catch (error) {
-      // No JSON file to migrate or already migrated
+      return [];
     }
   }
 
-  // Core CRUD operations
+  /**
+   * Import memories into SQLite database
+   */
+  private importMemories(memories: MemoryItem[]): void {
+    const insert = this.db.prepare(`
+      INSERT OR REPLACE INTO memories (key, value, category, timestamp, lastAccessed, priority)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `);
+
+    const insertMany = this.db.transaction((items: MemoryItem[]) => {
+      for (const item of items) {
+        insert.run(
+          item.key,
+          item.value,
+          item.category || 'general',
+          item.timestamp,
+          item.lastAccessed,
+          item.priority || 0
+        );
+      }
+    });
+
+    insertMany(memories);
+  }
+
+  /**
+   * Backup JSON file and log migration
+   */
+  private backupAndCleanup(jsonPath: string, count: number): void {
+    try {
+      require('fs').renameSync(jsonPath, `${jsonPath}.backup`);
+      // Migration successful - could add logger here
+    } catch (error) {
+      // Backup failed but migration completed
+    }
+  }
+
+  /**
+   * Save or update a memory item
+   * @param key - Unique identifier for the memory
+   * @param value - Content to store
+   * @param category - Category for organization (default: 'general')
+   * @param priority - Priority level (default: 0)
+   */
   public save(key: string, value: string, category: string = 'general', priority: number = 0): void {
     const timestamp = new Date().toISOString();
     const stmt = this.db.prepare(`
@@ -116,6 +158,11 @@ export class MemoryManager {
     stmt.run(key, value, category, timestamp, timestamp, priority);
   }
 
+  /**
+   * Recall a memory item by key
+   * @param key - Memory key to recall
+   * @returns Memory item or null if not found
+   */
   public recall(key: string): MemoryItem | null {
     const stmt = this.db.prepare(`
       SELECT * FROM memories WHERE key = ?
@@ -133,6 +180,11 @@ export class MemoryManager {
     return result || null;
   }
 
+  /**
+   * Delete a memory item
+   * @param key - Memory key to delete
+   * @returns True if deleted successfully
+   */
   public delete(key: string): boolean {
     const stmt = this.db.prepare(`
       DELETE FROM memories WHERE key = ?
@@ -142,6 +194,12 @@ export class MemoryManager {
     return result.changes > 0;
   }
 
+  /**
+   * Update a memory item's value
+   * @param key - Memory key to update
+   * @param value - New value
+   * @returns True if updated successfully
+   */
   public update(key: string, value: string): boolean {
     const timestamp = new Date().toISOString();
     const stmt = this.db.prepare(`
@@ -154,6 +212,11 @@ export class MemoryManager {
     return result.changes > 0;
   }
 
+  /**
+   * List all memories or filter by category
+   * @param category - Optional category filter
+   * @returns Array of memory items
+   */
   public list(category?: string): MemoryItem[] {
     let stmt;
 
@@ -172,6 +235,11 @@ export class MemoryManager {
     }
   }
 
+  /**
+   * Search memories by keyword
+   * @param query - Search query string
+   * @returns Array of matching memory items
+   */
   public search(query: string): MemoryItem[] {
     const stmt = this.db.prepare(`
       SELECT * FROM memories
@@ -183,6 +251,11 @@ export class MemoryManager {
     return stmt.all(pattern, pattern) as MemoryItem[];
   }
 
+  /**
+   * Get memories by priority level
+   * @param priority - Priority level to filter
+   * @returns Array of memory items with specified priority
+   */
   public getByPriority(priority: number): MemoryItem[] {
     const stmt = this.db.prepare(`
       SELECT * FROM memories
@@ -193,17 +266,12 @@ export class MemoryManager {
     return stmt.all(priority) as MemoryItem[];
   }
 
-  public updatePriority(key: string, priority: number): boolean {
-    const stmt = this.db.prepare(`
-      UPDATE memories
-      SET priority = ?
-      WHERE key = ?
-    `);
-
-    const result = stmt.run(priority, key);
-    return result.changes > 0;
-  }
-
+  /**
+   * Update priority of a memory item
+   * @param key - Memory key
+   * @param priority - New priority level
+   * @returns True if updated successfully
+   */
   public setPriority(key: string, priority: number): boolean {
     const stmt = this.db.prepare(`
       UPDATE memories SET priority = ? WHERE key = ?
@@ -213,8 +281,13 @@ export class MemoryManager {
     return result.changes > 0;
   }
 
+  /**
+   * Get memory statistics
+   * @returns Total count and count by category
+   */
   public getStats(): { total: number; byCategory: Record<string, number> } {
-    const total = (this.db.prepare(`SELECT COUNT(*) as count FROM memories`).get() as any).count;
+    const totalResult = this.db.prepare(`SELECT COUNT(*) as count FROM memories`).get() as { count: number };
+    const total = totalResult.count;
 
     const categories = this.db.prepare(`
       SELECT category, COUNT(*) as count
@@ -230,6 +303,9 @@ export class MemoryManager {
     return { total, byCategory };
   }
 
+  /**
+   * Close database connection
+   */
   public close(): void {
     this.db.close();
   }

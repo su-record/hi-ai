@@ -105,7 +105,7 @@ describe('MemoryManager - Critical Path', () => {
 
     it('should update priority', () => {
       manager.save('key1', 'value1', 'general', 0);
-      manager.updatePriority('key1', 2);
+      manager.setPriority('key1', 2);
 
       const memory = manager.recall('key1');
       expect(memory?.priority).toBe(2);

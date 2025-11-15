@@ -19,6 +19,11 @@ export interface ChunkScore {
 
 export class ContextCompressor {
   private static readonly MAX_CHUNK_SIZE = 500; // characters
+  private static readonly DEFAULT_TARGET_TOKENS = 4000;
+  private static readonly TOKENS_PER_CHAR_ESTIMATE = 0.25;
+  private static readonly MAX_SCORE = 100;
+  private static readonly MIN_SCORE = 0;
+
   private static readonly CODE_KEYWORDS = [
     'function', 'class', 'const', 'let', 'var', 'import', 'export',
     'def', 'async', 'await', 'return', 'if', 'for', 'while'
@@ -30,10 +35,13 @@ export class ContextCompressor {
 
   /**
    * Compress context by selecting most important chunks
+   * @param context - Text content to compress
+   * @param targetTokens - Target token count (default: 4000)
+   * @returns Compression result with statistics
    */
   public static compress(
     context: string,
-    targetTokens: number = 4000
+    targetTokens: number = ContextCompressor.DEFAULT_TARGET_TOKENS
   ): CompressionResult {
     // Handle empty or very short context
     if (!context || context.trim().length === 0) {
@@ -66,8 +74,7 @@ export class ContextCompressor {
     scoredChunks.sort((a, b) => b.score - a.score);
 
     // Select chunks until target size
-    const estimatedTokensPerChar = 0.25; // rough estimate: 1 token ≈ 4 chars
-    const targetChars = targetTokens / estimatedTokensPerChar;
+    const targetChars = targetTokens / ContextCompressor.TOKENS_PER_CHAR_ESTIMATE;
 
     const selected: ChunkScore[] = [];
     const removed: string[] = [];
@@ -123,68 +130,112 @@ export class ContextCompressor {
 
   /**
    * Score chunk importance (0-100)
+   * @param text - Text chunk to score
+   * @returns Scored chunk with type and keywords
    */
   private static scoreChunk(text: string): ChunkScore {
-    let score = 0;
-    const keywords: string[] = [];
     const lowerText = text.toLowerCase();
+    const type = this.detectChunkType(lowerText, text);
+    const keywords = this.extractKeywords(lowerText);
 
-    // Detect chunk type
-    let type: ChunkScore['type'] = 'explanation';
-    if (this.CODE_KEYWORDS.some(kw => lowerText.includes(kw))) {
-      type = 'code';
-      score += 30; // Code is important
-    }
-    if (lowerText.includes('?')) {
-      type = 'question';
-      score += 25; // Questions are important
-    }
-    if (lowerText.match(/^(answer|solution|결과|답변):/i)) {
-      type = 'answer';
-      score += 35; // Answers are very important
-    }
+    const baseScore = this.calculateBaseScore(text, lowerText, type);
+    const finalScore = Math.max(
+      ContextCompressor.MIN_SCORE,
+      Math.min(ContextCompressor.MAX_SCORE, baseScore)
+    );
 
-    // Check for important keywords
+    return { text, score: finalScore, type, keywords };
+  }
+
+  /**
+   * Detect chunk type based on content
+   */
+  private static detectChunkType(lowerText: string, text: string): ChunkScore['type'] {
+    if (text.includes('```')) return 'code';
+    if (lowerText.match(/^(answer|solution|결과|답변):/i)) return 'answer';
+    if (lowerText.match(/^(timestamp|date|author|file):/i)) return 'metadata';
+    if (lowerText.includes('?')) return 'question';
+    if (this.CODE_KEYWORDS.some(kw => lowerText.includes(kw))) return 'code';
+    return 'explanation';
+  }
+
+  /**
+   * Extract important keywords from text
+   */
+  private static extractKeywords(lowerText: string): string[] {
+    const keywords: string[] = [];
     for (const keyword of this.IMPORTANT_KEYWORDS) {
       if (lowerText.includes(keyword.toLowerCase())) {
-        score += 15;
         keywords.push(keyword);
       }
     }
+    return keywords;
+  }
 
-    // Check for code blocks
-    if (text.includes('```')) {
-      score += 20;
-      type = 'code';
-    }
+  /**
+   * Calculate base score for chunk
+   */
+  private static calculateBaseScore(text: string, lowerText: string, type: ChunkScore['type']): number {
+    let score = 0;
 
-    // Penalize very long chunks (might be verbose)
-    if (text.length > 1000) {
-      score -= 10;
+    // Type-based scoring
+    score += this.getTypeScore(type, lowerText);
+
+    // Keyword bonus
+    score += this.getKeywordScore(lowerText);
+
+    // Structure bonuses
+    score += this.getStructureScore(text);
+
+    return score;
+  }
+
+  /**
+   * Get score based on chunk type
+   */
+  private static getTypeScore(type: ChunkScore['type'], lowerText: string): number {
+    const typeScores: Record<ChunkScore['type'], number> = {
+      code: 30,
+      answer: 35,
+      question: 25,
+      explanation: 0,
+      metadata: -20
+    };
+    return typeScores[type];
+  }
+
+  /**
+   * Get score for important keywords
+   */
+  private static getKeywordScore(lowerText: string): number {
+    let score = 0;
+    for (const keyword of this.IMPORTANT_KEYWORDS) {
+      if (lowerText.includes(keyword.toLowerCase())) {
+        score += 15;
+      }
     }
+    return score;
+  }
+
+  /**
+   * Get score based on text structure
+   */
+  private static getStructureScore(text: string): number {
+    let score = 0;
+
+    // Penalize very long chunks
+    if (text.length > 1000) score -= 10;
 
     // Boost short, concise chunks
-    if (text.length < 200 && text.split('\n').length <= 5) {
-      score += 10;
-    }
+    if (text.length < 200 && text.split('\n').length <= 5) score += 10;
 
-    // Detect numbered lists or bullet points (structured info)
-    if (text.match(/^[\d\-\*•]/m)) {
-      score += 15;
-    }
+    // Boost structured content (lists)
+    if (text.match(/^[\d\-\*•]/m)) score += 15;
 
-    // Metadata has lowest priority
-    if (lowerText.match(/^(timestamp|date|author|file):/i)) {
-      type = 'metadata';
-      score -= 20;
-    }
+    // Boost code blocks
+    if (text.includes('```')) score += 20;
 
-    return {
-      text,
-      score: Math.max(0, Math.min(100, score)),
-      type,
-      keywords
-    };
+    return score;
   }
 
   /**
