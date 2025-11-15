@@ -1,5 +1,6 @@
 # Hi-AI: 자연어 기반 AI 개발 도구
 
+[![smithery badge](https://smithery.ai/badge/@su-record/hi-ai)](https://smithery.ai/server/@su-record/hi-ai)
 [![npm version](https://badge.fury.io/js/@su-record%2Fhi-ai.svg)](https://www.npmjs.com/package/@su-record/hi-ai)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![MCP Compatible](https://img.shields.io/badge/MCP-Compatible-blue.svg)](https://modelcontextprotocol.io)
