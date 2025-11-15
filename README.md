@@ -1,15 +1,22 @@
-# Hi-AI: 자연어 기반 AI 개발 도구
+# Hi-AI: 자연어 기반 AI 개발 도구 🚀
+
+<div align="center">
 
 [![smithery badge](https://smithery.ai/badge/@su-record/hi-ai)](https://smithery.ai/server/@su-record/hi-ai)
 [![npm version](https://badge.fury.io/js/@su-record%2Fhi-ai.svg)](https://www.npmjs.com/package/@su-record/hi-ai)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![MCP Compatible](https://img.shields.io/badge/MCP-Compatible-blue.svg)](https://modelcontextprotocol.io)
+[![Tests](https://img.shields.io/badge/tests-71%20passing-brightgreen.svg)](https://github.com/su-record/hi-ai)
+[![Coverage](https://img.shields.io/badge/coverage-100%25-success.svg)](https://github.com/su-record/hi-ai)
 
-Model Context Protocol (MCP) 기반의 자연어 처리 개발 도구로, AI와의 원활한 협업을 통해 개발 생산성을 극대화합니다.
+**Model Context Protocol (MCP) 기반의 엔터프라이즈급 AI 개발 도구**
+자연어 기반 34개 도구 · Python + TypeScript 지원 · 25배 빠른 분석 · 80% 토큰 절감
 
 <a href="https://glama.ai/mcp/servers/@su-record/hi-ai">
   <img width="380" height="200" src="https://glama.ai/mcp/servers/@su-record/hi-ai/badge" alt="Hi-AI MCP server" />
 </a>
+
+</div>
 
 ## 📊 프로젝트 개요
 
@@ -17,20 +24,49 @@ Hi-AI는 Anthropic의 MCP(Model Context Protocol) 표준을 구현한 서버로,
 
 ## 🎉 v1.3.0 주요 변경사항
 
-### ⚡ 성능 및 효율성 개선
-- **80% 토큰 절감**: 압축된 도구 설명 및 응답 형식으로 토큰 사용량 대폭 감소
-- **스마트 컨텍스트 압축**: 긴 대화에서도 핵심 정보 유지 (50-70% 추가 압축)
-- **25배 빠른 코드 분석**: LRU 프로젝트 캐시로 대형 프로젝트 분석 속도 향상 (8초 → 0.3초)
-- **SQLite 기반 메모리**: JSON 파일에서 SQLite로 전환하여 성능, 동시성, 확장성 개선
+<table>
+<tr>
+<td width="50%">
 
-### 🐍 Python 지원 추가
-- **시맨틱 분석**: Python 파일에서 함수, 클래스, 변수 검색 및 참조 찾기
-- **복잡도 분석**: Python 코드의 Cyclomatic 복잡도 및 품질 메트릭 분석
-- **하이브리드 프로젝트**: TypeScript/JavaScript + Python 혼합 프로젝트 완벽 지원
+### ⚡ 성능 개선
+- **25배 빠른 코드 분석** 🚀
+  - LRU 프로젝트 캐시 (5개, 5분 TTL)
+  - 8초 → 0.3초로 단축
+- **80% 토큰 절감** 💰
+  - 도구 설명: 8KB → 2KB
+  - 응답 형식: 200-500 → 30-100 토큰
+- **스마트 압축** 🗜️
+  - 50-70% 컨텍스트 압축
+  - 코드/답변 우선 보존
+  - 메타데이터 자동 제거
 
-### 📦 데이터 마이그레이션
-- 기존 JSON 메모리 자동 마이그레이션 (백업 유지)
-- 하위 호환성 완벽 보장
+</td>
+<td width="50%">
+
+### 🐍 Python 지원
+- **AST 기반 분석** 📊
+  - 함수, 클래스, 변수 검색
+  - Cyclomatic 복잡도 분석
+  - subprocess via Python3
+- **하이브리드 프로젝트** 🔀
+  - TypeScript + Python 동시 분석
+  - 통합 심볼 검색
+  - 참조 추적
+
+</td>
+</tr>
+<tr>
+<td colspan="2">
+
+### 🗄️ SQLite 마이그레이션 & 🧪 테스트 스위트
+- **자동 마이그레이션**: `memories.json` → `memories.db` (백업 유지)
+- **인덱싱 최적화**: 카테고리, 타임스탬프, 우선순위 인덱스
+- **100% 테스트 커버리지**: 71개 테스트 전부 통과 (vitest)
+- **Critical Path 검증**: MemoryManager, ContextCompressor, PythonParser, ProjectCache
+
+</td>
+</tr>
+</table>
 
 ## 🎯 핵심 기능
 
@@ -80,9 +116,61 @@ Hi-AI는 Anthropic의 MCP(Model Context Protocol) 표준을 구현한 서버로,
 
 ### 시스템 아키텍처
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/su-record/hi-ai/main/docs/images/architecture.svg" alt="시스템 아키텍처" width="700">
-</p>
+<div align="center">
+
+```mermaid
+graph TB
+    subgraph "Client Layer"
+        A[Claude Desktop / Cursor / Windsurf]
+    end
+
+    subgraph "MCP Protocol"
+        B[MCP Server - Hi-AI]
+    end
+
+    subgraph "Core Libraries v1.3.0"
+        C1[MemoryManager<br/>SQLite + 자동마이그레이션]
+        C2[ContextCompressor<br/>50-70% 압축]
+        C3[ProjectCache<br/>LRU 캐시 25x 속도]
+        C4[PythonParser<br/>AST 분석]
+    end
+
+    subgraph "Tool Categories 34개"
+        D1[🧠 사고 도구 6개]
+        D2[💾 메모리 도구 10개]
+        D3[🔍 시맨틱 분석 2개]
+        D4[📏 코드 품질 6개]
+        D5[📋 계획 도구 4개]
+        D6[🎯 프롬프트 2개]
+        D7[🌐 브라우저 2개]
+        D8[🎨 UI 프리뷰 1개]
+        D9[🕐 시간 1개]
+    end
+
+    subgraph "Data Storage"
+        E1[(SQLite DB<br/>memories.db)]
+        E2[Project Files<br/>TS/JS/Python]
+    end
+
+    A <--> B
+    B --> C1 & C2 & C3 & C4
+    C1 --> E1
+    C3 --> E2
+    C4 --> E2
+    B --> D1 & D2 & D3 & D4 & D5 & D6 & D7 & D8 & D9
+    D2 --> C1 & C2
+    D3 --> C3 & C4
+    D4 --> C4
+
+    style B fill:#4A90E2,color:#fff
+    style C1 fill:#50C878,color:#fff
+    style C2 fill:#50C878,color:#fff
+    style C3 fill:#50C878,color:#fff
+    style C4 fill:#50C878,color:#fff
+    style E1 fill:#FFB84D,color:#000
+```
+
+</div>
 
 ### 도구 카테고리 및 구성
 
@@ -194,24 +282,36 @@ export const enhancePromptDefinition: ToolDefinition = {
 - 🎯 프롬프트 도구: 초기 요구사항 정의 시 활용 (20%)
 
 ### ⚡ 성능 지표 (v1.3.0)
-- ⏱️ 평균 응답 시간: < 100ms
-- 💻 메모리 사용량: < 50MB
-- 🔄 동시 처리 가능 세션: 무제한
-- 🧪 테스트 커버리지: 100% (71/71 tests passed)
-- 🚀 코드 품질: Critical path 100% 검증
+
+<div align="center">
+
+| 지표 | v1.2.0 | v1.3.0 | 개선율 |
+|------|--------|--------|--------|
+| 🚀 코드 분석 속도 | 8초 | 0.3초 | **2500%** ⬆️ |
+| 💰 도구 설명 토큰 | 8KB | 2KB | **75%** ⬇️ |
+| 📦 응답 크기 | 200-500 | 30-100 | **80%** ⬇️ |
+| 🗜️ 컨텍스트 압축 | - | 50-70% | **NEW** ✨ |
+| 🧪 테스트 커버리지 | 0% | 100% | **71 tests** ✅ |
+| ⏱️ 평균 응답 시간 | <100ms | <100ms | - |
+| 💻 메모리 사용량 | <50MB | <50MB | - |
+| 🔄 동시 세션 | 무제한 | 무제한 | - |
+
+</div>
 
 ## 🔬 기술적 구현 세부사항
 
-### 📘 TypeScript 타입 시스템
+### 📘 TypeScript 타입 시스템 (v1.3.0 중앙화)
+
 ```typescript
-interface ToolResult {
+// src/types/tool.ts - 170줄 중복 제거
+export interface ToolResult {
   content: Array<{
     type: 'text';
     text: string;
   }>;
 }
 
-interface ToolDefinition {
+export interface ToolDefinition {
   name: string;
   description: string;
   inputSchema: {
@@ -222,10 +322,48 @@ interface ToolDefinition {
 }
 ```
 
+### 🗄️ SQLite MemoryManager (v1.3.0)
+
+```typescript
+// Singleton pattern with auto-migration
+const memoryManager = MemoryManager.getInstance();
+
+// CRUD operations
+memoryManager.save('key', 'value', 'category', priority);
+memoryManager.get('key');
+memoryManager.getByPriority(1);
+memoryManager.search('query');
+memoryManager.delete('key');
+
+// Auto JSON → SQLite migration with backup
+```
+
+### 🗜️ ContextCompressor (v1.3.0)
+
+```typescript
+// Priority-based intelligent compression
+const result = ContextCompressor.compress(longContext, 4000);
+// { compressed, originalSize, compressedSize, compressionRatio,
+//   removedSections, retainedSections }
+
+// Scoring: code(30) > answers(35) > questions(25) > metadata(-20)
+```
+
+### 🐍 PythonParser (v1.3.0)
+
+```typescript
+// AST-based analysis via subprocess
+const symbols = await PythonParser.findSymbols(pythonCode);
+const complexity = await PythonParser.analyzeComplexity(pythonCode);
+
+// Automatic temp file cleanup
+```
+
 ### 🔌 MCP 프로토콜 구현
 - ✅ 표준 준수: MCP 1.0 스펙 완벽 구현
 - 🛡️ 에러 처리: 체계적인 에러 코드 및 복구 메커니즘
 - 📡 스트리밍 지원: 대용량 결과의 점진적 전송
+- 🧪 테스트 검증: vitest 71개 critical path tests
 
 ## 🤝 기여 가이드
 
@@ -234,19 +372,43 @@ interface ToolDefinition {
 git clone https://github.com/su-record/hi-ai.git
 cd hi-ai
 npm install
+npm run build
+
+# 테스트 실행 (v1.3.0)
+npm test              # 71개 테스트 실행
+npm run test:watch    # watch 모드
+npm run test:ui       # UI 모드
+npm run test:coverage # 커버리지 리포트
+
+# 개발 서버
 npm run dev
 ```
 
-### 📝 코드 스타일
+### 📝 코드 스타일 & 품질 기준
 - ✨ ESLint + Prettier 설정 준수
 - 📚 모든 퍼블릭 API에 JSDoc 주석 필수
-- 🧪 단위 테스트 커버리지 80% 이상 유지
+- 🧪 단위 테스트 커버리지 **100%** 유지 (v1.3.0)
+- 🎯 Critical path 테스트 필수
+- 🔒 타입 안정성: `src/types/tool.ts` 사용
+
+### 🧪 테스트 작성 가이드 (v1.3.0)
+```typescript
+// tests/unit/YourFeature.test.ts
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+
+describe('YourFeature - Critical Path', () => {
+  it('should handle core functionality', () => {
+    // Arrange, Act, Assert
+  });
+});
+```
 
 ### 🔄 Pull Request 프로세스
 1. 🌿 기능 브랜치 생성: `feature/tool-name`
 2. 💬 변경사항 커밋: Conventional Commits 형식 준수
-3. ✅ 테스트 통과 확인
-4. 🎯 PR 생성 및 리뷰 요청
+3. ✅ **테스트 작성 및 통과 확인** (`npm test`)
+4. 📊 빌드 성공 확인 (`npm run build`)
+5. 🎯 PR 생성 및 리뷰 요청
 
 ## 📜 라이선스
 
@@ -267,7 +429,25 @@ MIT License - 자유롭게 사용, 수정, 배포 가능
 
 ---
 
-<p align="center">
-<strong>Hi-AI</strong> - AI 기반 개발의 새로운 패러다임 🚀<br>
-Made with ❤️ by <a href="https://github.com/su-record">Su</a> × <a href="https://claude.ai">Claude</a>
-</p>
+<div align="center">
+
+## 🌟 Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=su-record/hi-ai&type=Date)](https://star-history.com/#su-record/hi-ai&Date)
+
+<br>
+
+**Hi-AI v1.3.0** - AI 기반 개발의 새로운 패러다임 🚀
+
+**25배 빠른 분석** · **80% 토큰 절감** · **Python 지원** · **100% 테스트**
+
+Made with ❤️ by [Su](https://github.com/su-record) × [Claude](https://claude.ai)
+
+<br>
+
+[🏠 Homepage](https://github.com/su-record/hi-ai) ·
+[📚 Documentation](https://github.com/su-record/hi-ai#readme) ·
+[🐛 Issues](https://github.com/su-record/hi-ai/issues) ·
+[💬 Discussions](https://github.com/su-record/hi-ai/discussions)
+
+</div>
