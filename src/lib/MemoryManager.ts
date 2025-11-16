@@ -18,6 +18,8 @@ export class MemoryManager {
   private db: Database.Database;
   private static instance: MemoryManager | null = null;
   private readonly dbPath: string;
+  private recallStmt: Database.Statement | null = null;
+  private saveStmt: Database.Statement | null = null;
 
   private constructor(customDbPath?: string) {
     if (customDbPath) {
@@ -46,9 +48,36 @@ export class MemoryManager {
     }
   }
 
+  private static cleanupRegistered = false;
+
   public static getInstance(customDbPath?: string): MemoryManager {
     if (!MemoryManager.instance) {
       MemoryManager.instance = new MemoryManager(customDbPath);
+
+      // Register cleanup handlers only once
+      if (!MemoryManager.cleanupRegistered) {
+        MemoryManager.cleanupRegistered = true;
+
+        // Increase max listeners to avoid warnings in test environments
+        process.setMaxListeners(Math.max(process.getMaxListeners(), 15));
+
+        // Register cleanup on process exit to prevent memory leaks
+        const cleanup = () => {
+          if (MemoryManager.instance) {
+            MemoryManager.instance.close();
+          }
+        };
+
+        process.on('exit', cleanup);
+        process.on('SIGINT', () => {
+          cleanup();
+          process.exit(0);
+        });
+        process.on('SIGTERM', () => {
+          cleanup();
+          process.exit(0);
+        });
+      }
     }
     return MemoryManager.instance;
   }
@@ -69,6 +98,32 @@ export class MemoryManager {
       CREATE INDEX IF NOT EXISTS idx_timestamp ON memories(timestamp);
       CREATE INDEX IF NOT EXISTS idx_priority ON memories(priority);
       CREATE INDEX IF NOT EXISTS idx_lastAccessed ON memories(lastAccessed);
+    `);
+
+    // Enable WAL mode for better concurrency
+    this.db.pragma('journal_mode = WAL');
+
+    // Pre-compile frequently used statements for performance
+    this.initializePreparedStatements();
+  }
+
+  private initializePreparedStatements(): void {
+    // Pre-compile recall statement
+    try {
+      this.recallStmt = this.db.prepare(`
+        UPDATE memories SET lastAccessed = ?
+        WHERE key = ?
+        RETURNING *
+      `);
+    } catch (error) {
+      // RETURNING not supported, will use fallback
+      this.recallStmt = null;
+    }
+
+    // Pre-compile save statement
+    this.saveStmt = this.db.prepare(`
+      INSERT OR REPLACE INTO memories (key, value, category, timestamp, lastAccessed, priority)
+      VALUES (?, ?, ?, ?, ?, ?)
     `);
   }
 
@@ -150,12 +205,17 @@ export class MemoryManager {
    */
   public save(key: string, value: string, category: string = 'general', priority: number = 0): void {
     const timestamp = new Date().toISOString();
-    const stmt = this.db.prepare(`
-      INSERT OR REPLACE INTO memories (key, value, category, timestamp, lastAccessed, priority)
-      VALUES (?, ?, ?, ?, ?, ?)
-    `);
 
-    stmt.run(key, value, category, timestamp, timestamp, priority);
+    if (this.saveStmt) {
+      this.saveStmt.run(key, value, category, timestamp, timestamp, priority);
+    } else {
+      // Fallback if prepared statement not available
+      const stmt = this.db.prepare(`
+        INSERT OR REPLACE INTO memories (key, value, category, timestamp, lastAccessed, priority)
+        VALUES (?, ?, ?, ?, ?, ?)
+      `);
+      stmt.run(key, value, category, timestamp, timestamp, priority);
+    }
   }
 
   /**
@@ -164,17 +224,21 @@ export class MemoryManager {
    * @returns Memory item or null if not found
    */
   public recall(key: string): MemoryItem | null {
-    const stmt = this.db.prepare(`
-      SELECT * FROM memories WHERE key = ?
-    `);
+    const timestamp = new Date().toISOString();
 
-    const result = stmt.get(key) as MemoryItem | undefined;
+    // Use pre-compiled statement if available
+    if (this.recallStmt) {
+      const result = this.recallStmt.get(timestamp, key) as MemoryItem | undefined;
+      return result || null;
+    }
+
+    // Fallback for older SQLite versions (without RETURNING support)
+    const selectStmt = this.db.prepare(`SELECT * FROM memories WHERE key = ?`);
+    const result = selectStmt.get(key) as MemoryItem | undefined;
 
     if (result) {
-      // Update last accessed time
-      this.db.prepare(`
-        UPDATE memories SET lastAccessed = ? WHERE key = ?
-      `).run(new Date().toISOString(), key);
+      const updateStmt = this.db.prepare(`UPDATE memories SET lastAccessed = ? WHERE key = ?`);
+      updateStmt.run(timestamp, key);
     }
 
     return result || null;
@@ -307,6 +371,18 @@ export class MemoryManager {
    * Close database connection
    */
   public close(): void {
-    this.db.close();
+    if (this.db) {
+      this.db.close();
+      MemoryManager.instance = null;
+    }
+  }
+
+  /**
+   * Reset singleton instance (useful for testing and cleanup)
+   */
+  public static resetInstance(): void {
+    if (MemoryManager.instance) {
+      MemoryManager.instance.close();
+    }
   }
 }

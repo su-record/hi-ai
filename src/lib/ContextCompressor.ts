@@ -8,6 +8,11 @@ export interface CompressionResult {
   compressionRatio: number;
   removedSections: string[];
   retainedSections: string[];
+  retentionStats?: {
+    codeRetentionPercent: number;
+    answerRetentionPercent: number;
+    questionRetentionPercent: number;
+  };
 }
 
 export interface ChunkScore {
@@ -66,7 +71,12 @@ export class ContextCompressor {
         compressedSize: context.length,
         compressionRatio: 1,
         removedSections: [],
-        retainedSections: scoredChunks.map(s => s.type)
+        retainedSections: scoredChunks.map(s => s.type),
+        retentionStats: {
+          codeRetentionPercent: 100,
+          answerRetentionPercent: 100,
+          questionRetentionPercent: 100
+        }
       };
     }
 
@@ -92,13 +102,47 @@ export class ContextCompressor {
     // Reconstruct compressed context
     const compressed = this.reconstructContext(selected, removed);
 
+    // Calculate retention statistics
+    const retentionStats = this.calculateRetentionStats(scoredChunks, selected);
+
     return {
       compressed,
       originalSize: context.length,
       compressedSize: compressed.length,
       compressionRatio: compressed.length / context.length,
       removedSections: removed,
-      retainedSections: selected.map(s => s.type)
+      retainedSections: selected.map(s => s.type),
+      retentionStats
+    };
+  }
+
+  /**
+   * Calculate retention percentages by type
+   */
+  private static calculateRetentionStats(
+    allChunks: ChunkScore[],
+    selectedChunks: ChunkScore[]
+  ): {
+    codeRetentionPercent: number;
+    answerRetentionPercent: number;
+    questionRetentionPercent: number;
+  } {
+    const countByType = (chunks: ChunkScore[], type: ChunkScore['type']): number => {
+      return chunks.filter(c => c.type === type).length;
+    };
+
+    const totalCode = countByType(allChunks, 'code');
+    const totalAnswer = countByType(allChunks, 'answer');
+    const totalQuestion = countByType(allChunks, 'question');
+
+    const retainedCode = countByType(selectedChunks, 'code');
+    const retainedAnswer = countByType(selectedChunks, 'answer');
+    const retainedQuestion = countByType(selectedChunks, 'question');
+
+    return {
+      codeRetentionPercent: totalCode > 0 ? Math.round((retainedCode / totalCode) * 100) : 0,
+      answerRetentionPercent: totalAnswer > 0 ? Math.round((retainedAnswer / totalAnswer) * 100) : 0,
+      questionRetentionPercent: totalQuestion > 0 ? Math.round((retainedQuestion / totalQuestion) * 100) : 0
     };
   }
 

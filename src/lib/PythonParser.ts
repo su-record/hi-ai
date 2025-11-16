@@ -144,82 +144,93 @@ if __name__ == '__main__':
 `;
 
   public static async findSymbols(code: string): Promise<PythonSymbol[]> {
+    let scriptPath: string | null = null;
+    let codePath: string | null = null;
+
     try {
       // Write Python script to temp file
-      const scriptPath = path.join(os.tmpdir(), `hi-ai-parser-${Date.now()}.py`);
+      scriptPath = path.join(os.tmpdir(), `hi-ai-parser-${Date.now()}-${process.pid}.py`);
       await writeFile(scriptPath, this.pythonScript);
 
       // Write code to temp file
-      const codePath = path.join(os.tmpdir(), `hi-ai-code-${Date.now()}.py`);
+      codePath = path.join(os.tmpdir(), `hi-ai-code-${Date.now()}-${process.pid}.py`);
       await writeFile(codePath, code);
 
-      try {
-        // Execute Python script
-        const { stdout, stderr } = await execAsync(`python3 "${scriptPath}" symbols < "${codePath}"`, {
-          maxBuffer: 10 * 1024 * 1024 // 10MB
-        });
+      // Execute Python script
+      const { stdout, stderr } = await execAsync(`python3 "${scriptPath}" symbols < "${codePath}"`, {
+        maxBuffer: 10 * 1024 * 1024 // 10MB
+      });
 
-        if (stderr && !stderr.includes('DeprecationWarning')) {
-          console.error('Python stderr:', stderr);
-        }
-
-        const result = JSON.parse(stdout);
-
-        if (!result.success) {
-          throw new Error(result.error || 'Python parsing failed');
-        }
-
-        return result.symbols || [];
-      } finally {
-        // Cleanup temp files
-        await unlink(scriptPath).catch(() => {});
-        await unlink(codePath).catch(() => {});
+      if (stderr && !stderr.includes('DeprecationWarning')) {
+        console.error('Python stderr:', stderr);
       }
+
+      const result = JSON.parse(stdout);
+
+      if (!result.success) {
+        throw new Error(result.error || 'Python parsing failed');
+      }
+
+      return result.symbols || [];
     } catch (error) {
       if ((error as any).code === 'ENOENT') {
         throw new Error('Python 3 not found. Please install Python 3 to analyze Python code.');
       }
       throw error;
+    } finally {
+      // Always cleanup temp files, even on error
+      if (scriptPath) {
+        await unlink(scriptPath).catch(() => {});
+      }
+      if (codePath) {
+        await unlink(codePath).catch(() => {});
+      }
     }
   }
 
   public static async analyzeComplexity(code: string): Promise<PythonComplexity> {
+    let scriptPath: string | null = null;
+    let codePath: string | null = null;
+
     try {
-      const scriptPath = path.join(os.tmpdir(), `hi-ai-parser-${Date.now()}.py`);
+      scriptPath = path.join(os.tmpdir(), `hi-ai-parser-${Date.now()}-${process.pid}.py`);
       await writeFile(scriptPath, this.pythonScript);
 
-      const codePath = path.join(os.tmpdir(), `hi-ai-code-${Date.now()}.py`);
+      codePath = path.join(os.tmpdir(), `hi-ai-code-${Date.now()}-${process.pid}.py`);
       await writeFile(codePath, code);
 
-      try {
-        const { stdout, stderr } = await execAsync(`python3 "${scriptPath}" complexity < "${codePath}"`, {
-          maxBuffer: 10 * 1024 * 1024
-        });
+      const { stdout, stderr } = await execAsync(`python3 "${scriptPath}" complexity < "${codePath}"`, {
+        maxBuffer: 10 * 1024 * 1024
+      });
 
-        if (stderr && !stderr.includes('DeprecationWarning')) {
-          console.error('Python stderr:', stderr);
-        }
-
-        const result = JSON.parse(stdout);
-
-        if (!result.success) {
-          throw new Error(result.error || 'Python complexity analysis failed');
-        }
-
-        return {
-          cyclomaticComplexity: result.cyclomaticComplexity || 1,
-          functions: result.functions || [],
-          classes: result.classes || []
-        };
-      } finally {
-        await unlink(scriptPath).catch(() => {});
-        await unlink(codePath).catch(() => {});
+      if (stderr && !stderr.includes('DeprecationWarning')) {
+        console.error('Python stderr:', stderr);
       }
+
+      const result = JSON.parse(stdout);
+
+      if (!result.success) {
+        throw new Error(result.error || 'Python complexity analysis failed');
+      }
+
+      return {
+        cyclomaticComplexity: result.cyclomaticComplexity || 1,
+        functions: result.functions || [],
+        classes: result.classes || []
+      };
     } catch (error) {
       if ((error as any).code === 'ENOENT') {
         throw new Error('Python 3 not found. Please install Python 3 to analyze Python code.');
       }
       throw error;
+    } finally {
+      // Always cleanup temp files, even on error
+      if (scriptPath) {
+        await unlink(scriptPath).catch(() => {});
+      }
+      if (codePath) {
+        await unlink(codePath).catch(() => {});
+      }
     }
   }
 

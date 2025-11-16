@@ -54,36 +54,125 @@ export const analyzeComplexityDefinition: ToolDefinition = {
   }
 };
 
+/**
+ * Calculate cognitive complexity (how hard code is to understand)
+ */
+function calculateCognitiveComplexity(code: string) {
+  const CONTROL_STRUCTURES = ['if', 'for', 'while'];
+  let cognitiveScore = 0;
+  const lines = code.split('\n');
+  let nestingLevel = 0;
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+
+    // Increment for control structures
+    if (CONTROL_STRUCTURES.some(keyword => trimmed.includes(keyword))) {
+      cognitiveScore += 1 + nestingLevel;
+    }
+
+    // Increment for catch/switch
+    if (trimmed.includes('catch') || trimmed.includes('switch')) {
+      cognitiveScore += 1 + nestingLevel;
+    }
+
+    // Update nesting level
+    const openBraces = (line.match(/\{/g) || []).length;
+    const closeBraces = (line.match(/\}/g) || []).length;
+    nestingLevel = Math.max(0, nestingLevel + openBraces - closeBraces);
+  }
+
+  const threshold = CODE_QUALITY_METRICS.COMPLEXITY.maxCognitiveComplexity;
+  return {
+    value: cognitiveScore,
+    threshold,
+    status: cognitiveScore <= threshold ? 'pass' : 'fail',
+    description: 'How difficult the code is to understand'
+  };
+}
+
+/**
+ * Calculate AST-based cyclomatic complexity
+ */
+function calculateAstComplexity(code: string) {
+  const CONTROL_FLOW_NODES = [
+    'IfStatement', 'ForStatement', 'ForOfStatement', 'ForInStatement',
+    'WhileStatement', 'CaseClause', 'ConditionalExpression',
+    'DoStatement', 'CatchClause', 'BinaryExpression'
+  ];
+
+  let astCyclomatic = 1;
+  try {
+    const sourceFile = AST_PROJECT.createSourceFile('temp.ts', code, {
+      overwrite: true,
+      scriptKind: ScriptKind.TS
+    });
+
+    sourceFile.forEachDescendant((node) => {
+      if (CONTROL_FLOW_NODES.includes(node.getKindName())) {
+        astCyclomatic++;
+      }
+    });
+
+    const threshold = CODE_QUALITY_METRICS.COMPLEXITY.maxCyclomaticComplexity;
+    return {
+      value: astCyclomatic,
+      threshold,
+      status: astCyclomatic <= threshold ? 'pass' : 'fail',
+      description: 'AST 기반 분기/조건문 수를 통한 cyclomatic complexity'
+    };
+  } catch (e) {
+    return {
+      value: null,
+      status: 'error',
+      description: 'AST 분석 실패: ' + (e instanceof Error ? e.message : String(e))
+    };
+  }
+}
+
+/**
+ * Analyze Python code complexity
+ */
+async function analyzePythonComplexity(code: string): Promise<ToolResult> {
+  try {
+    const pythonComplexity = await PythonParser.analyzeComplexity(code);
+    const totalComplexity = pythonComplexity.cyclomaticComplexity;
+    const issues: string[] = [];
+
+    const MAX_COMPLEXITY = 10;
+    if (totalComplexity > MAX_COMPLEXITY) {
+      issues.push('High complexity');
+    }
+
+    pythonComplexity.functions.forEach(f => {
+      if (f.complexity > MAX_COMPLEXITY) {
+        issues.push(`Function ${f.name}: complexity ${f.complexity}`);
+      }
+    });
+
+    const issuesText = issues.length ? `\nIssues: ${issues.join(', ')}` : '';
+    return {
+      content: [{
+        type: 'text',
+        text: `Python Complexity: ${totalComplexity}\nFunctions: ${pythonComplexity.functions.length}\nClasses: ${pythonComplexity.classes.length}${issuesText}`
+      }]
+    };
+  } catch (error) {
+    return {
+      content: [{
+        type: 'text',
+        text: `Python analysis error: ${error instanceof Error ? error.message : 'Unknown error'}`
+      }]
+    };
+  }
+}
+
 export async function analyzeComplexity(args: { code: string; metrics?: string }): Promise<ToolResult> {
   const { code: complexityCode, metrics: complexityMetrics = 'all' } = args;
 
   // Check if this is Python code
   if (PythonParser.isPythonCode(complexityCode)) {
-    try {
-      const pythonComplexity = await PythonParser.analyzeComplexity(complexityCode);
-
-      const totalComplexity = pythonComplexity.cyclomaticComplexity;
-      const issues: string[] = [];
-
-      if (totalComplexity > 10) issues.push('High complexity');
-      pythonComplexity.functions.forEach(f => {
-        if (f.complexity > 10) issues.push(`Function ${f.name}: complexity ${f.complexity}`);
-      });
-
-      return {
-        content: [{
-          type: 'text',
-          text: `Python Complexity: ${totalComplexity}\nFunctions: ${pythonComplexity.functions.length}\nClasses: ${pythonComplexity.classes.length}${issues.length ? '\nIssues: ' + issues.join(', ') : ''}`
-        }]
-      };
-    } catch (error) {
-      return {
-        content: [{
-          type: 'text',
-          text: `Python analysis error: ${error instanceof Error ? error.message : 'Unknown error'}`
-        }]
-      };
-    }
+    return analyzePythonComplexity(complexityCode);
   }
 
   const complexityAnalysis = {
@@ -97,42 +186,7 @@ export async function analyzeComplexity(args: { code: string; metrics?: string }
   };
 
   // AST 기반 cyclomatic complexity 분석
-  let astCyclomatic = 1;
-  try {
-    const sourceFile = AST_PROJECT.createSourceFile('temp.ts', complexityCode, {
-      overwrite: true,
-      scriptKind: ScriptKind.TS
-    });
-    sourceFile.forEachDescendant((node) => {
-      const kind = node.getKindName();
-      if (
-        kind === 'IfStatement' ||
-        kind === 'ForStatement' ||
-        kind === 'ForOfStatement' ||
-        kind === 'ForInStatement' ||
-        kind === 'WhileStatement' ||
-        kind === 'CaseClause' ||
-        kind === 'ConditionalExpression' ||
-        kind === 'DoStatement' ||
-        kind === 'CatchClause' ||
-        kind === 'BinaryExpression' // &&, ||
-      ) {
-        astCyclomatic++;
-      }
-    });
-    complexityAnalysis.results.astCyclomaticComplexity = {
-      value: astCyclomatic,
-      threshold: CODE_QUALITY_METRICS.COMPLEXITY.maxCyclomaticComplexity,
-      status: astCyclomatic <= CODE_QUALITY_METRICS.COMPLEXITY.maxCyclomaticComplexity ? 'pass' : 'fail',
-      description: 'AST 기반 분기/조건문 수를 통한 cyclomatic complexity'
-    };
-  } catch (e) {
-    complexityAnalysis.results.astCyclomaticComplexity = {
-      value: null,
-      status: 'error',
-      description: 'AST 분석 실패: ' + (e instanceof Error ? e.message : String(e))
-    };
-  }
+  complexityAnalysis.results.astCyclomaticComplexity = calculateAstComplexity(complexityCode);
   
   if (complexityMetrics === 'cyclomatic' || complexityMetrics === 'all') {
     const cyclomaticComplexityScore = (complexityCode.match(/\bif\b|\bfor\b|\bwhile\b|\bcase\b|\b&&\b|\b\|\|\b/g) || []).length + 1;
@@ -145,40 +199,7 @@ export async function analyzeComplexity(args: { code: string; metrics?: string }
   }
   
   if (complexityMetrics === 'cognitive' || complexityMetrics === 'all') {
-    // Cognitive complexity calculation (simplified version)
-    let cognitiveComplexityScore = 0;
-    const lines = complexityCode.split('\n');
-    let nestingLevel = 0;
-    
-    for (const line of lines) {
-      const trimmedLine = line.trim();
-      
-      // Increment nesting for control structures
-      if (trimmedLine.includes('if') || trimmedLine.includes('for') || trimmedLine.includes('while')) {
-        cognitiveComplexityScore += 1 + nestingLevel;
-      }
-      
-      // Increment for catch blocks
-      if (trimmedLine.includes('catch')) {
-        cognitiveComplexityScore += 1 + nestingLevel;
-      }
-      
-      // Increment for switch statements
-      if (trimmedLine.includes('switch')) {
-        cognitiveComplexityScore += 1 + nestingLevel;
-      }
-      
-      // Update nesting level
-      const braceCount = (line.match(/\{/g) || []).length - (line.match(/\}/g) || []).length;
-      nestingLevel = Math.max(0, nestingLevel + braceCount);
-    }
-    
-    complexityAnalysis.results.cognitiveComplexity = {
-      value: cognitiveComplexityScore,
-      threshold: CODE_QUALITY_METRICS.COMPLEXITY.maxCognitiveComplexity,
-      status: cognitiveComplexityScore <= CODE_QUALITY_METRICS.COMPLEXITY.maxCognitiveComplexity ? 'pass' : 'fail',
-      description: 'How difficult the code is to understand'
-    };
+    complexityAnalysis.results.cognitiveComplexity = calculateCognitiveComplexity(complexityCode);
   }
   
   if (complexityMetrics === 'halstead' || complexityMetrics === 'all') {
