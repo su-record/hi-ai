@@ -33,6 +33,8 @@ export interface PythonComplexity {
 }
 
 export class PythonParser {
+  private static cleanupRegistered = false;
+
   private static pythonScript = `
 import ast
 import sys
@@ -147,12 +149,54 @@ if __name__ == '__main__':
   private static scriptPath: string | null = null;
 
   /**
+   * Register cleanup handlers on first use
+   */
+  private static registerCleanup(): void {
+    if (this.cleanupRegistered) {
+      return;
+    }
+
+    this.cleanupRegistered = true;
+
+    // Cleanup on normal exit
+    process.on('exit', () => {
+      if (this.scriptPath) {
+        try {
+          const fs = require('fs');
+          fs.unlinkSync(this.scriptPath);
+        } catch (e) {
+          // Ignore errors during cleanup
+        }
+      }
+    });
+
+    // Cleanup on SIGINT (Ctrl+C)
+    process.on('SIGINT', () => {
+      this.cleanup().then(() => process.exit(0));
+    });
+
+    // Cleanup on SIGTERM
+    process.on('SIGTERM', () => {
+      this.cleanup().then(() => process.exit(0));
+    });
+
+    // Cleanup on uncaught exception
+    process.on('uncaughtException', (error) => {
+      console.error('Uncaught exception:', error);
+      this.cleanup().then(() => process.exit(1));
+    });
+  }
+
+  /**
    * Initialize Python script (singleton pattern)
    */
   private static async ensureScriptExists(): Promise<string> {
     if (this.scriptPath) {
       return this.scriptPath;
     }
+
+    // Register cleanup handlers on first use
+    this.registerCleanup();
 
     this.scriptPath = path.join(os.tmpdir(), `hi-ai-parser-${process.pid}.py`);
     await writeFile(this.scriptPath, this.pythonScript);

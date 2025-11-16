@@ -64,7 +64,9 @@ export class ContextCompressor {
     const scoredChunks = chunks.map(chunk => this.scoreChunk(chunk));
 
     // If content is already smaller than target, return as-is
-    if (context.length <= targetTokens * 4) {
+    // Only skip compression if content is very small (use 1.2x instead of 4x)
+    // This ensures compression activates more aggressively
+    if (context.length <= targetTokens * 1.2) {
       return {
         compressed: context,
         originalSize: context.length,

@@ -8,6 +8,7 @@ interface CachedProject {
   project: Project;
   lastAccess: number;
   fileCount: number;
+  estimatedMemoryMB: number;
 }
 
 export class ProjectCache {
@@ -15,6 +16,8 @@ export class ProjectCache {
   private cache = new Map<string, CachedProject>();
   private readonly MAX_CACHE_SIZE = 5;
   private readonly CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+  private readonly MAX_TOTAL_MEMORY_MB = 200; // Max 200MB total cache
+  private readonly MAX_PROJECT_MEMORY_MB = 100; // Max 100MB per project
 
   private constructor() {}
 
@@ -62,12 +65,32 @@ export class ProjectCache {
     const pattern = path.join(normalizedPath, '**/*.{ts,tsx,js,jsx}');
     project.addSourceFilesAtPaths(pattern);
 
-    const fileCount = project.getSourceFiles().length;
+    const sourceFiles = project.getSourceFiles();
+    const fileCount = sourceFiles.length;
+
+    // Estimate memory usage (rough: 1MB base + 0.5MB per file)
+    const estimatedMemoryMB = 1 + (fileCount * 0.5);
+
+    // Skip caching if project is too large
+    if (estimatedMemoryMB > this.MAX_PROJECT_MEMORY_MB) {
+      console.warn(`Project ${normalizedPath} is too large (${estimatedMemoryMB}MB, ${fileCount} files) - not caching`);
+      return project;
+    }
+
+    // Check total cache memory before adding
+    const totalMemory = this.getTotalMemoryUsage();
+    if (totalMemory + estimatedMemoryMB > this.MAX_TOTAL_MEMORY_MB) {
+      // Evict projects until we have enough space
+      while (this.getTotalMemoryUsage() + estimatedMemoryMB > this.MAX_TOTAL_MEMORY_MB && this.cache.size > 0) {
+        this.evictLRU();
+      }
+    }
 
     this.cache.set(normalizedPath, {
       project,
       lastAccess: now,
-      fileCount
+      fileCount,
+      estimatedMemoryMB
     });
 
     return project;
@@ -82,18 +105,28 @@ export class ProjectCache {
     this.cache.clear();
   }
 
-  public getStats(): { size: number; projects: Array<{ path: string; files: number; age: number }> } {
+  public getStats(): { size: number; totalMemoryMB: number; projects: Array<{ path: string; files: number; memoryMB: number; age: number }> } {
     const now = Date.now();
     const projects = Array.from(this.cache.entries()).map(([path, cached]) => ({
       path,
       files: cached.fileCount,
+      memoryMB: cached.estimatedMemoryMB,
       age: Math.floor((now - cached.lastAccess) / 1000) // seconds
     }));
 
     return {
       size: this.cache.size,
+      totalMemoryMB: this.getTotalMemoryUsage(),
       projects
     };
+  }
+
+  private getTotalMemoryUsage(): number {
+    let total = 0;
+    this.cache.forEach(cached => {
+      total += cached.estimatedMemoryMB;
+    });
+    return total;
   }
 
   private removeExpired(): void {

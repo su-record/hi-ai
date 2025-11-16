@@ -20,6 +20,8 @@ export class MemoryManager {
   private readonly dbPath: string;
   private recallStmt: Database.Statement | null = null;
   private saveStmt: Database.Statement | null = null;
+  private recallSelectStmt: Database.Statement | null = null;
+  private recallUpdateStmt: Database.Statement | null = null;
 
   private constructor(customDbPath?: string) {
     if (customDbPath) {
@@ -116,8 +118,10 @@ export class MemoryManager {
         RETURNING *
       `);
     } catch (error) {
-      // RETURNING not supported, will use fallback
+      // RETURNING not supported, pre-compile fallback statements
       this.recallStmt = null;
+      this.recallSelectStmt = this.db.prepare(`SELECT * FROM memories WHERE key = ?`);
+      this.recallUpdateStmt = this.db.prepare(`UPDATE memories SET lastAccessed = ? WHERE key = ?`);
     }
 
     // Pre-compile save statement
@@ -232,13 +236,15 @@ export class MemoryManager {
       return result || null;
     }
 
-    // Fallback for older SQLite versions (without RETURNING support)
-    const selectStmt = this.db.prepare(`SELECT * FROM memories WHERE key = ?`);
-    const result = selectStmt.get(key) as MemoryItem | undefined;
+    // Fallback for older SQLite versions (using pre-compiled statements)
+    if (!this.recallSelectStmt || !this.recallUpdateStmt) {
+      throw new Error('Fallback recall statements not initialized');
+    }
+
+    const result = this.recallSelectStmt.get(key) as MemoryItem | undefined;
 
     if (result) {
-      const updateStmt = this.db.prepare(`UPDATE memories SET lastAccessed = ? WHERE key = ?`);
-      updateStmt.run(timestamp, key);
+      this.recallUpdateStmt.run(timestamp, key);
     }
 
     return result || null;
@@ -346,13 +352,11 @@ export class MemoryManager {
   }
 
   /**
-   * Get memory statistics
+   * Get memory statistics (optimized to single query)
    * @returns Total count and count by category
    */
   public getStats(): { total: number; byCategory: Record<string, number> } {
-    const totalResult = this.db.prepare(`SELECT COUNT(*) as count FROM memories`).get() as { count: number };
-    const total = totalResult.count;
-
+    // Single query with ROLLUP or combined approach
     const categories = this.db.prepare(`
       SELECT category, COUNT(*) as count
       FROM memories
@@ -360,8 +364,11 @@ export class MemoryManager {
     `).all() as Array<{ category: string; count: number }>;
 
     const byCategory: Record<string, number> = {};
+    let total = 0;
+
     categories.forEach(cat => {
       byCategory[cat.category] = cat.count;
+      total += cat.count;
     });
 
     return { total, byCategory };
