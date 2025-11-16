@@ -84,7 +84,10 @@ export class ContextCompressor {
     scoredChunks.sort((a, b) => b.score - a.score);
 
     // Select chunks until target size
-    const targetChars = targetTokens / ContextCompressor.TOKENS_PER_CHAR_ESTIMATE;
+    // TOKENS_PER_CHAR_ESTIMATE = 0.25 means 1 char ≈ 0.25 tokens, so 4 chars ≈ 1 token
+    // Reserve space for headers and formatting (5% overhead, min 50 chars, max 300 chars)
+    const HEADER_OVERHEAD = Math.max(50, Math.min(300, targetTokens * 4 * 0.05));
+    const targetChars = (targetTokens * 4) - HEADER_OVERHEAD;
 
     const selected: ChunkScore[] = [];
     const removed: string[] = [];

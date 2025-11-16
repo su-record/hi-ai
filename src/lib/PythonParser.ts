@@ -143,22 +143,39 @@ if __name__ == '__main__':
     print(json.dumps(result))
 `;
 
-  public static async findSymbols(code: string): Promise<PythonSymbol[]> {
-    let scriptPath: string | null = null;
+  // Singleton Python script path to avoid recreating it
+  private static scriptPath: string | null = null;
+
+  /**
+   * Initialize Python script (singleton pattern)
+   */
+  private static async ensureScriptExists(): Promise<string> {
+    if (this.scriptPath) {
+      return this.scriptPath;
+    }
+
+    this.scriptPath = path.join(os.tmpdir(), `hi-ai-parser-${process.pid}.py`);
+    await writeFile(this.scriptPath, this.pythonScript);
+    return this.scriptPath;
+  }
+
+  /**
+   * Execute Python code analysis with improved memory management
+   */
+  private static async executePython(code: string, action: 'symbols' | 'complexity'): Promise<any> {
     let codePath: string | null = null;
 
     try {
-      // Write Python script to temp file
-      scriptPath = path.join(os.tmpdir(), `hi-ai-parser-${Date.now()}-${process.pid}.py`);
-      await writeFile(scriptPath, this.pythonScript);
+      const scriptPath = await this.ensureScriptExists();
 
-      // Write code to temp file
-      codePath = path.join(os.tmpdir(), `hi-ai-code-${Date.now()}-${process.pid}.py`);
+      // Write code to temp file with unique name
+      codePath = path.join(os.tmpdir(), `hi-ai-code-${Date.now()}-${Math.random().toString(36).substr(2, 9)}.py`);
       await writeFile(codePath, code);
 
       // Execute Python script
-      const { stdout, stderr } = await execAsync(`python3 "${scriptPath}" symbols < "${codePath}"`, {
-        maxBuffer: 10 * 1024 * 1024 // 10MB
+      const { stdout, stderr } = await execAsync(`python3 "${scriptPath}" ${action} < "${codePath}"`, {
+        maxBuffer: 10 * 1024 * 1024, // 10MB
+        timeout: 30000 // 30 second timeout
       });
 
       if (stderr && !stderr.includes('DeprecationWarning')) {
@@ -168,69 +185,44 @@ if __name__ == '__main__':
       const result = JSON.parse(stdout);
 
       if (!result.success) {
-        throw new Error(result.error || 'Python parsing failed');
+        throw new Error(result.error || `Python ${action} analysis failed`);
       }
 
-      return result.symbols || [];
+      return result;
     } catch (error) {
       if ((error as any).code === 'ENOENT') {
         throw new Error('Python 3 not found. Please install Python 3 to analyze Python code.');
       }
       throw error;
     } finally {
-      // Always cleanup temp files, even on error
-      if (scriptPath) {
-        await unlink(scriptPath).catch(() => {});
-      }
+      // Always cleanup code temp file immediately
       if (codePath) {
         await unlink(codePath).catch(() => {});
       }
     }
   }
 
+  public static async findSymbols(code: string): Promise<PythonSymbol[]> {
+    const result = await this.executePython(code, 'symbols');
+    return result.symbols || [];
+  }
+
   public static async analyzeComplexity(code: string): Promise<PythonComplexity> {
-    let scriptPath: string | null = null;
-    let codePath: string | null = null;
+    const result = await this.executePython(code, 'complexity');
+    return {
+      cyclomaticComplexity: result.cyclomaticComplexity || 1,
+      functions: result.functions || [],
+      classes: result.classes || []
+    };
+  }
 
-    try {
-      scriptPath = path.join(os.tmpdir(), `hi-ai-parser-${Date.now()}-${process.pid}.py`);
-      await writeFile(scriptPath, this.pythonScript);
-
-      codePath = path.join(os.tmpdir(), `hi-ai-code-${Date.now()}-${process.pid}.py`);
-      await writeFile(codePath, code);
-
-      const { stdout, stderr } = await execAsync(`python3 "${scriptPath}" complexity < "${codePath}"`, {
-        maxBuffer: 10 * 1024 * 1024
-      });
-
-      if (stderr && !stderr.includes('DeprecationWarning')) {
-        console.error('Python stderr:', stderr);
-      }
-
-      const result = JSON.parse(stdout);
-
-      if (!result.success) {
-        throw new Error(result.error || 'Python complexity analysis failed');
-      }
-
-      return {
-        cyclomaticComplexity: result.cyclomaticComplexity || 1,
-        functions: result.functions || [],
-        classes: result.classes || []
-      };
-    } catch (error) {
-      if ((error as any).code === 'ENOENT') {
-        throw new Error('Python 3 not found. Please install Python 3 to analyze Python code.');
-      }
-      throw error;
-    } finally {
-      // Always cleanup temp files, even on error
-      if (scriptPath) {
-        await unlink(scriptPath).catch(() => {});
-      }
-      if (codePath) {
-        await unlink(codePath).catch(() => {});
-      }
+  /**
+   * Cleanup singleton script on process exit
+   */
+  public static async cleanup(): Promise<void> {
+    if (this.scriptPath) {
+      await unlink(this.scriptPath).catch(() => {});
+      this.scriptPath = null;
     }
   }
 

@@ -272,7 +272,7 @@ export async function analyzeComplexity(args: { code: string; metrics?: string }
   return {
     content: [{
       type: 'text',
-      text: `Complexity: ${astCyclomatic}\nScore: ${complexityAnalysis.overallScore}${issues.length ? '\nIssues: ' + issues.join(', ') : ''}`
+      text: `Complexity: ${complexityAnalysis.results.astCyclomaticComplexity?.value ?? 'N/A'}\nScore: ${complexityAnalysis.overallScore}${issues.length ? '\nIssues: ' + issues.join(', ') : ''}`
     }]
   };
 }
