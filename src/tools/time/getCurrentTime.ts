@@ -12,6 +12,10 @@ export const getCurrentTimeDefinition: ToolDefinition = {
       timezone: { type: 'string', description: 'Timezone (e.g., America/New_York, Asia/Seoul)' }
     },
     required: []
+  },
+  annotations: {
+    title: 'Get Current Time',
+    audience: ['user', 'assistant']
   }
 };
 

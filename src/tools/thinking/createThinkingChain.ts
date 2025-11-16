@@ -12,6 +12,10 @@ export const createThinkingChainDefinition: ToolDefinition = {
       steps: { type: 'number', description: 'Number of thinking steps' }
     },
     required: ['topic']
+  },
+  annotations: {
+    title: 'Create Thinking Chain',
+    audience: ['user', 'assistant']
   }
 };
 

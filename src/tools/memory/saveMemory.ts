@@ -14,6 +14,10 @@ export const saveMemoryDefinition: ToolDefinition = {
       category: { type: 'string', description: 'Memory category', enum: ['project', 'personal', 'code', 'notes'] }
     },
     required: ['key', 'value']
+  },
+  annotations: {
+    title: 'Save Memory',
+    audience: ['user', 'assistant']
   }
 };
 

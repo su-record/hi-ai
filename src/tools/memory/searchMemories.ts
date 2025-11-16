@@ -13,6 +13,10 @@ export const searchMemoriesDefinition: ToolDefinition = {
       category: { type: 'string', description: 'Category to search in' }
     },
     required: ['query']
+  },
+  annotations: {
+    title: 'Search Memories',
+    audience: ['user', 'assistant']
   }
 };
 

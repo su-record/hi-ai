@@ -13,6 +13,10 @@ export const listMemoriesDefinition: ToolDefinition = {
       limit: { type: 'number', description: 'Maximum number of results' }
     },
     required: []
+  },
+  annotations: {
+    title: 'List Memories',
+    audience: ['user', 'assistant']
   }
 };
 

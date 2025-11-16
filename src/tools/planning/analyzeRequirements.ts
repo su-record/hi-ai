@@ -27,6 +27,10 @@ export const analyzeRequirementsDefinition: ToolDefinition = {
       analysisMethod: { type: 'string', description: 'Analysis method', enum: ['moscow', 'kano', 'value-effort'], default: 'moscow' }
     },
     required: ['requirements']
+  },
+  annotations: {
+    title: 'Analyze Requirements',
+    audience: ['user', 'assistant']
   }
 };
 

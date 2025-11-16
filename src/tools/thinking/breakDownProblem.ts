@@ -1,28 +1,12 @@
 // Sequential thinking tool - completely independent
 
 import { Project, ScriptKind } from "ts-morph";
+import { ToolResult, ToolDefinition } from '../../types/tool.js';
 
 const AST_PROJECT = new Project({
   useInMemoryFileSystem: true,
   compilerOptions: { allowJs: true, skipLibCheck: true }
 });
-
-interface ToolResult {
-  content: Array<{
-    type: 'text';
-    text: string;
-  }>;
-}
-
-interface ToolDefinition {
-  name: string;
-  description: string;
-  inputSchema: {
-    type: 'object';
-    properties: Record<string, any>;
-    required: string[];
-  };
-}
 
 interface SubProblem {
   id: string;
@@ -45,6 +29,10 @@ export const breakDownProblemDefinition: ToolDefinition = {
       approach: { type: 'string', description: 'Breakdown approach', enum: ['sequential', 'hierarchical', 'dependency-based'] }
     },
     required: ['problem']
+  },
+  annotations: {
+    title: 'Break Down Problem',
+    audience: ['user', 'assistant']
   }
 };
 

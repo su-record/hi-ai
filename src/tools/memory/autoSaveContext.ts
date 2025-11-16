@@ -18,6 +18,10 @@ export const autoSaveContextDefinition: ToolDefinition = {
       compress: { type: 'boolean', description: 'Enable smart compression (default: true)' }
     },
     required: ['urgency', 'contextType']
+  },
+  annotations: {
+    title: 'Auto-Save Context',
+    audience: ['user', 'assistant']
   }
 };
 

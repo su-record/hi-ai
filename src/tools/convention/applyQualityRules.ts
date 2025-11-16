@@ -45,6 +45,10 @@ export const applyQualityRulesDefinition: ToolDefinition = {
       language: { type: 'string', description: 'Programming language context', enum: ['javascript', 'typescript', 'react', 'vue', 'general'] }
     },
     required: ['scope']
+  },
+  annotations: {
+    title: 'Apply Quality Rules',
+    audience: ['user', 'assistant']
   }
 };
 

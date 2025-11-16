@@ -25,13 +25,17 @@ export const findSymbolDefinition: ToolDefinition = {
     properties: {
       symbolName: { type: 'string', description: 'Name of the symbol to find' },
       projectPath: { type: 'string', description: 'Project directory path' },
-      symbolType: { 
-        type: 'string', 
+      symbolType: {
+        type: 'string',
         enum: ['all', 'function', 'class', 'interface', 'variable', 'type'],
-        description: 'Type of symbol to search for' 
+        description: 'Type of symbol to search for'
       }
     },
     required: ['symbolName', 'projectPath']
+  },
+  annotations: {
+    title: 'Find Symbol',
+    audience: ['user', 'assistant']
   }
 };
 

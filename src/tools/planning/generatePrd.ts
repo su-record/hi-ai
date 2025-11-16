@@ -16,6 +16,10 @@ export const generatePrdDefinition: ToolDefinition = {
       constraints: { type: 'string', description: 'Technical/business constraints' }
     },
     required: ['productName', 'productVision']
+  },
+  annotations: {
+    title: 'Generate PRD',
+    audience: ['user', 'assistant']
   }
 };
 

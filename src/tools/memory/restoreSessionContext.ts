@@ -14,6 +14,10 @@ export const restoreSessionContextDefinition: ToolDefinition = {
       filterType: { type: 'string', description: 'Filter context by type', enum: ['all', 'progress', 'decisions', 'code-snippets', 'debugging', 'planning'] }
     },
     required: ['sessionId']
+  },
+  annotations: {
+    title: 'Restore Session',
+    audience: ['user', 'assistant']
   }
 };
 

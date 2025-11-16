@@ -36,6 +36,10 @@ export const featureRoadmapDefinition: ToolDefinition = {
       teamSize: { type: 'number', description: 'Development team size' }
     },
     required: ['projectName', 'features']
+  },
+  annotations: {
+    title: 'Feature Roadmap',
+    audience: ['user', 'assistant']
   }
 };
 

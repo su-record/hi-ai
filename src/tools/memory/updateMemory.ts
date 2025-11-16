@@ -14,6 +14,10 @@ export const updateMemoryDefinition: ToolDefinition = {
       append: { type: 'boolean', description: 'Append to existing value' }
     },
     required: ['key', 'value']
+  },
+  annotations: {
+    title: 'Update Memory',
+    audience: ['user', 'assistant']
   }
 };
 

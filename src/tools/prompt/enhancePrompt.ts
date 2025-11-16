@@ -10,13 +10,17 @@ export const enhancePromptDefinition: ToolDefinition = {
     properties: {
       prompt: { type: 'string', description: 'Original prompt to enhance' },
       context: { type: 'string', description: 'Additional context or project information' },
-      enhancement_type: { 
-        type: 'string', 
+      enhancement_type: {
+        type: 'string',
         enum: ['clarity', 'specificity', 'context', 'all'],
-        description: 'Type of enhancement (default: all)' 
+        description: 'Type of enhancement (default: all)'
       }
     },
     required: ['prompt']
+  },
+  annotations: {
+    title: 'Enhance Prompt',
+    audience: ['user', 'assistant']
   }
 };
 

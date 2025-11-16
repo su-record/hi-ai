@@ -12,6 +12,10 @@ export const analyzeProblemDefinition: ToolDefinition = {
       domain: { type: 'string', description: 'Problem domain' }
     },
     required: ['problem']
+  },
+  annotations: {
+    title: 'Analyze Problem',
+    audience: ['user', 'assistant']
   }
 };
 

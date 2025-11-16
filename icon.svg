@@ -1,0 +1,108 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Friendly gradient background -->
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4facfe;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#00f2fe;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Hand gradient -->
+    <linearGradient id="hand" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffeaa7;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#fdcb6e;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Speech bubble gradient -->
+    <linearGradient id="bubble" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f8f9fa;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Soft shadow -->
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+
+  <!-- Background with rounded corners -->
+  <rect width="512" height="512" rx="110" fill="url(#bg)"/>
+
+  <!-- Decorative circles (friendly dots) -->
+  <g opacity="0.2">
+    <circle cx="80" cy="100" r="30" fill="white"/>
+    <circle cx="430" cy="120" r="40" fill="white"/>
+    <circle cx="100" cy="400" r="35" fill="white"/>
+    <circle cx="420" cy="380" r="25" fill="white"/>
+  </g>
+
+  <!-- Waving hand emoji style -->
+  <g transform="translate(360, 140)" filter="url(#shadow)">
+    <!-- Palm -->
+    <ellipse cx="0" cy="20" rx="35" ry="40" fill="url(#hand)" transform="rotate(-20)"/>
+
+    <!-- Thumb -->
+    <ellipse cx="-25" cy="5" rx="12" ry="20" fill="url(#hand)" transform="rotate(-50)"/>
+
+    <!-- Index finger -->
+    <ellipse cx="-10" cy="-20" rx="10" ry="25" fill="url(#hand)" transform="rotate(-10)"/>
+
+    <!-- Middle finger -->
+    <ellipse cx="5" cy="-25" rx="10" ry="28" fill="url(#hand)" transform="rotate(5)"/>
+
+    <!-- Ring finger -->
+    <ellipse cx="20" cy="-20" rx="9" ry="24" fill="url(#hand)" transform="rotate(15)"/>
+
+    <!-- Pinky -->
+    <ellipse cx="32" cy="-10" rx="8" ry="20" fill="url(#hand)" transform="rotate(25)"/>
+
+    <!-- Motion lines (waving effect) -->
+    <g stroke="#fdcb6e" stroke-width="3" stroke-linecap="round" opacity="0.6">
+      <path d="M -45 -15 Q -40 -20 -35 -15" fill="none"/>
+      <path d="M -50 0 Q -45 -5 -40 0" fill="none"/>
+      <path d="M -48 15 Q -43 10 -38 15" fill="none"/>
+    </g>
+  </g>
+
+  <!-- Speech bubble with "Hi, AI!" -->
+  <g transform="translate(200, 280)" filter="url(#shadow)">
+    <!-- Bubble shape -->
+    <rect x="-100" y="-60" width="200" height="110" rx="25" fill="url(#bubble)" stroke="#4facfe" stroke-width="4"/>
+
+    <!-- Bubble tail pointing to hand -->
+    <path d="M 80 -20 L 120 -40 L 95 0 Z" fill="url(#bubble)" stroke="#4facfe" stroke-width="4" stroke-linejoin="round"/>
+
+    <!-- "Hi," text -->
+    <text x="0" y="-15" font-family="'Comic Sans MS', 'Arial Rounded MT Bold', cursive" font-size="50" font-weight="700"
+          fill="#4facfe" text-anchor="middle">Hi,</text>
+
+    <!-- "AI!" text with excitement -->
+    <text x="0" y="30" font-family="'Comic Sans MS', 'Arial Rounded MT Bold', cursive" font-size="45" font-weight="700"
+          fill="#00f2fe" text-anchor="middle">AI!</text>
+  </g>
+
+  <!-- Friendly robot/assistant icon at bottom -->
+  <g transform="translate(256, 440)">
+    <!-- Robot head -->
+    <rect x="-30" y="-25" width="60" height="50" rx="15" fill="#ffffff" opacity="0.95" stroke="#4facfe" stroke-width="3"/>
+
+    <!-- Eyes -->
+    <circle cx="-12" cy="-8" r="5" fill="#4facfe"/>
+    <circle cx="12" cy="-8" r="5" fill="#4facfe"/>
+
+    <!-- Smile -->
+    <path d="M -15 8 Q 0 15 15 8" stroke="#4facfe" stroke-width="3" fill="none" stroke-linecap="round"/>
+
+    <!-- Antenna -->
+    <line x1="0" y1="-25" x2="0" y2="-35" stroke="#4facfe" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="0" cy="-38" r="4" fill="#00f2fe"/>
+  </g>
+
+  <!-- Sparkles for friendly atmosphere -->
+  <g fill="#ffffff" opacity="0.7">
+    <!-- Star shape helper function result -->
+    <path d="M 120 180 L 123 187 L 130 188 L 124 193 L 126 200 L 120 196 L 114 200 L 116 193 L 110 188 L 117 187 Z"/>
+    <path d="M 400 260 L 403 267 L 410 268 L 404 273 L 406 280 L 400 276 L 394 280 L 396 273 L 390 268 L 397 267 Z"/>
+    <circle cx="90" cy="320" r="4"/>
+    <circle cx="430" cy="300" r="5"/>
+  </g>
+</svg>

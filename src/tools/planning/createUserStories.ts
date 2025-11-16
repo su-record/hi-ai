@@ -27,6 +27,10 @@ export const createUserStoriesDefinition: ToolDefinition = {
       includeAcceptanceCriteria: { type: 'boolean', description: 'Include acceptance criteria for each story' }
     },
     required: ['features']
+  },
+  annotations: {
+    title: 'Create User Stories',
+    audience: ['user', 'assistant']
   }
 };
 

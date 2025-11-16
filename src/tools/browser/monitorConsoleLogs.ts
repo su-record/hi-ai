@@ -15,6 +15,10 @@ export const monitorConsoleLogsDefinition: ToolDefinition = {
       duration: { type: 'number', description: 'Monitoring duration in seconds' }
     },
     required: ['url']
+  },
+  annotations: {
+    title: 'Monitor Console Logs',
+    audience: ['user', 'assistant']
   }
 };
 

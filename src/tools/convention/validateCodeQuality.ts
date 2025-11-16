@@ -45,6 +45,10 @@ export const validateCodeQualityDefinition: ToolDefinition = {
       metrics: { type: 'string', description: 'Specific metrics to check', enum: ['complexity', 'coupling', 'cohesion', 'maintainability', 'performance', 'all'] }
     },
     required: ['code']
+  },
+  annotations: {
+    title: 'Validate Code Quality',
+    audience: ['user', 'assistant']
   }
 };
 

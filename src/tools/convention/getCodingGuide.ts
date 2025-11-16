@@ -50,6 +50,10 @@ export const getCodingGuideDefinition: ToolDefinition = {
       category: { type: 'string', description: 'Guide category' }
     },
     required: ['name']
+  },
+  annotations: {
+    title: 'Get Coding Guide',
+    audience: ['user', 'assistant']
   }
 };
 

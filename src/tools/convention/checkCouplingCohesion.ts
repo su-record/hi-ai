@@ -44,6 +44,10 @@ export const checkCouplingCohesionDefinition: ToolDefinition = {
       checkDependencies: { type: 'boolean', description: 'Analyze dependencies' }
     },
     required: ['code']
+  },
+  annotations: {
+    title: 'Check Coupling & Cohesion',
+    audience: ['user', 'assistant']
   }
 };
 

@@ -14,6 +14,10 @@ export const formatAsPlanDefinition: ToolDefinition = {
       includeCheckboxes: { type: 'boolean', description: 'Include checkboxes for tracking progress' }
     },
     required: ['content']
+  },
+  annotations: {
+    title: 'Format as Plan',
+    audience: ['user', 'assistant']
   }
 };
 

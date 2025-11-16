@@ -48,6 +48,10 @@ export const startSessionDefinition: ToolDefinition = {
       restoreContext: { type: 'boolean', description: 'Restore previous session context (default: true)' }
     },
     required: []
+  },
+  annotations: {
+    title: 'Start Session',
+    audience: ['user', 'assistant']
   }
 };
 

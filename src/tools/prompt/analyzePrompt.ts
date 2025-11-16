@@ -16,6 +16,10 @@ export const analyzePromptDefinition: ToolDefinition = {
       }
     },
     required: ['prompt']
+  },
+  annotations: {
+    title: 'Analyze Prompt',
+    audience: ['user', 'assistant']
   }
 };
 

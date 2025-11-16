@@ -47,6 +47,10 @@ export const previewUiAsciiDefinition: ToolDefinition = {
       }
     },
     required: ['page_name', 'components']
+  },
+  annotations: {
+    title: 'Preview UI (ASCII)',
+    audience: ['user', 'assistant']
   }
 };
 

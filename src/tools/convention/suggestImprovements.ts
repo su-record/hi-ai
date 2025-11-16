@@ -13,6 +13,10 @@ export const suggestImprovementsDefinition: ToolDefinition = {
       priority: { type: 'string', description: 'Priority level', enum: ['critical', 'high', 'medium', 'low'] }
     },
     required: ['code']
+  },
+  annotations: {
+    title: 'Suggest Improvements',
+    audience: ['user', 'assistant']
   }
 };
 

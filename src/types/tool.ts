@@ -7,12 +7,19 @@ export interface ToolResult {
   }>;
 }
 
+export interface ToolAnnotation {
+  audience?: string[];
+  title?: string;
+  progress?: number;
+}
+
 export interface ToolDefinition {
   name: string;
   description: string;
   inputSchema: {
     type: 'object';
     properties: Record<string, any>;
-    required: string[];
+    required?: string[];
   };
+  annotations?: ToolAnnotation;
 }

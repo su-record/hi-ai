@@ -28,6 +28,10 @@ export const findReferencesDefinition: ToolDefinition = {
       projectPath: { type: 'string', description: 'Project directory path' }
     },
     required: ['symbolName', 'projectPath']
+  },
+  annotations: {
+    title: 'Find References',
+    audience: ['user', 'assistant']
   }
 };
 

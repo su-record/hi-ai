@@ -51,6 +51,10 @@ export const analyzeComplexityDefinition: ToolDefinition = {
       metrics: { type: 'string', description: 'Metrics to calculate', enum: ['cyclomatic', 'cognitive', 'halstead', 'all'] }
     },
     required: ['code']
+  },
+  annotations: {
+    title: 'Analyze Complexity',
+    audience: ['user', 'assistant']
   }
 };
 

@@ -13,6 +13,10 @@ export const thinkAloudProcessDefinition: ToolDefinition = {
       verbosity: { type: 'string', description: 'Verbosity level', enum: ['concise', 'moderate', 'verbose'] }
     },
     required: ['scenario']
+  },
+  annotations: {
+    title: 'Think Aloud',
+    audience: ['user', 'assistant']
   }
 };
 

@@ -12,6 +12,10 @@ export const deleteMemoryDefinition: ToolDefinition = {
       key: { type: 'string', description: 'Memory key to delete' }
     },
     required: ['key']
+  },
+  annotations: {
+    title: 'Delete Memory',
+    audience: ['user', 'assistant']
   }
 };
 

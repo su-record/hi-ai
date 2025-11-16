@@ -13,6 +13,10 @@ export const stepByStepAnalysisDefinition: ToolDefinition = {
       detailLevel: { type: 'string', description: 'Level of detail', enum: ['basic', 'detailed', 'comprehensive'] }
     },
     required: ['task']
+  },
+  annotations: {
+    title: 'Step-by-Step Analysis',
+    audience: ['user', 'assistant']
   }
 };
 

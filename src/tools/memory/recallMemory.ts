@@ -13,6 +13,10 @@ export const recallMemoryDefinition: ToolDefinition = {
       category: { type: 'string', description: 'Memory category to search in' }
     },
     required: ['key']
+  },
+  annotations: {
+    title: 'Recall Memory',
+    audience: ['user', 'assistant']
   }
 };
 

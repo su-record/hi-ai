@@ -15,6 +15,10 @@ export const inspectNetworkRequestsDefinition: ToolDefinition = {
       includeHeaders: { type: 'boolean', description: 'Include request/response headers' }
     },
     required: ['url']
+  },
+  annotations: {
+    title: 'Inspect Network Requests',
+    audience: ['user', 'assistant']
   }
 };
 

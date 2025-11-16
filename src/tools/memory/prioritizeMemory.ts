@@ -16,6 +16,10 @@ export const prioritizeMemoryDefinition: ToolDefinition = {
       nextSteps: { type: 'array', items: { type: 'string' }, description: 'Planned next steps' }
     },
     required: ['currentTask']
+  },
+  annotations: {
+    title: 'Prioritize Memory',
+    audience: ['user', 'assistant']
   }
 };
 
