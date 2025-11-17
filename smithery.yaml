@@ -22,10 +22,25 @@ env:
 homepage: "https://github.com/su-record/hi-ai"
 repository: "https://github.com/su-record/hi-ai"
 readme: "https://github.com/su-record/hi-ai/main/README.md"
-icon: "🤖"
+icon: "https://raw.githubusercontent.com/su-record/hi-ai/main/icon.png"
 capabilities:
   tools: true
-  resources: false
-  prompts: false
+  resources: true
+  prompts: true
 config:
   requires_api_key: false
+  schema:
+    type: "object"
+    properties:
+      sessionId:
+        type: "string"
+        description: "Unique session identifier for context management"
+      enableAutoSave:
+        type: "boolean"
+        description: "Automatically save session context"
+        default: true
+      defaultPriority:
+        type: "string"
+        enum: ["low", "medium", "high", "critical"]
+        description: "Default priority level for tasks"
+        default: "medium"

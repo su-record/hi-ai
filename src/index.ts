@@ -106,12 +106,14 @@ const tools = [
 function createServer() {
   const server = new Server(
     {
-      name: 'hi-ai',
+      name: 'Hi-AI',
       version: '1.3.0',
     },
     {
       capabilities: {
         tools: {},
+        prompts: {},
+        resources: {},
       },
     }
   );
