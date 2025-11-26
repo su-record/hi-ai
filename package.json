@@ -1,7 +1,7 @@
 {
   "name": "@su-record/hi-ai",
-  "version": "1.3.0",
-  "description": "Model Context Protocol based AI development assistant with 38 specialized tools for TypeScript, JavaScript, and Python projects",
+  "version": "1.4.0",
+  "description": "Model Context Protocol based AI development assistant with 40 specialized tools for TypeScript, JavaScript, and Python projects - Now with 9-step reasoning framework and Gemini prompting strategies",
   "displayName": "Hi-AI",
   "icon": "https://raw.githubusercontent.com/su-record/hi-ai/main/icon.png",
   "homepage": "https://github.com/su-record/hi-ai",

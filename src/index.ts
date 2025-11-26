@@ -46,7 +46,9 @@ import { analyzeRequirementsDefinition, analyzeRequirements } from './tools/plan
 import { featureRoadmapDefinition, featureRoadmap } from './tools/planning/featureRoadmap.js';
 import { enhancePromptDefinition, enhancePrompt } from './tools/prompt/enhancePrompt.js';
 import { analyzePromptDefinition, analyzePrompt } from './tools/prompt/analyzePrompt.js';
+import { enhancePromptGeminiDefinition, enhancePromptGemini } from './tools/prompt/enhancePromptGemini.js';
 import { previewUiAsciiDefinition, previewUiAscii } from './tools/ui/previewUiAscii.js';
+import { applyReasoningFrameworkDefinition, applyReasoningFramework } from './tools/reasoning/applyReasoningFramework.js';
 
 // Collect all tool definitions
 const tools = [
@@ -98,6 +100,10 @@ const tools = [
   // Prompt Enhancement Tools
   enhancePromptDefinition,
   analyzePromptDefinition,
+  enhancePromptGeminiDefinition,
+
+  // Reasoning Tools
+  applyReasoningFrameworkDefinition,
 
   // UI Preview Tools
   previewUiAsciiDefinition
@@ -107,7 +113,7 @@ function createServer() {
   const server = new Server(
     {
       name: 'Hi-AI',
-      version: '1.3.0',
+      version: '1.4.0',
     },
     {
       capabilities: {
@@ -208,6 +214,12 @@ function createServer() {
           return await enhancePrompt(args as any) as CallToolResult;
         case 'analyze_prompt':
           return await analyzePrompt(args as any) as CallToolResult;
+        case 'enhance_prompt_gemini':
+          return await enhancePromptGemini(args as any) as CallToolResult;
+
+        // Reasoning Tools
+        case 'apply_reasoning_framework':
+          return await applyReasoningFramework(args as any) as CallToolResult;
 
         // UI Preview Tools
         case 'preview_ui_ascii':

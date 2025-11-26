@@ -9,9 +9,9 @@
 [![Tests](https://img.shields.io/badge/tests-71%20passing-brightgreen.svg)](https://github.com/su-record/hi-ai)
 [![Coverage](https://img.shields.io/badge/coverage-100%25-success.svg)](https://github.com/su-record/hi-ai)
 
-**Model Context Protocol 기반 AI 개발 어시스턴트**  
+**Model Context Protocol 기반 AI 개발 어시스턴트**
 
-TypeScript + Python 지원 · 38개 전문 도구 · 지능형 메모리 관리 · 코드 분석
+TypeScript + Python 지원 · 40개 전문 도구 · 지능형 메모리 관리 · 코드 분석 · 추론 프레임워크
 
 <a href="https://glama.ai/mcp/servers/@su-record/hi-ai">
   <img width="380" height="200" src="https://glama.ai/mcp/servers/@su-record/hi-ai/badge" alt="Hi-AI MCP server" />
@@ -27,7 +27,7 @@ TypeScript + Python 지원 · 38개 전문 도구 · 지능형 메모리 관리 
 
 - [개요](#개요)
 - [주요 기능](#주요-기능)
-- [v1.3.0 업데이트](#v130-업데이트)
+- [v1.4.0 업데이트](#v140-업데이트)
 - [설치](#설치)
 - [도구 카탈로그](#도구-카탈로그)
 - [아키텍처](#아키텍처)
@@ -175,6 +175,33 @@ AST 기반 코드 분석 및 탐색 도구:
 
 ---
 
+## v1.4.0 업데이트
+
+### 신규 기능 (2025-01-26)
+
+#### 2개의 고급 도구 추가
+
+**apply_reasoning_framework** (추론 카테고리)
+- 9단계 추론 프레임워크 적용
+- 복잡한 문제의 체계적 분석
+- 논리적 종속성, 위험 평가, 가설 탐색
+- 완전성과 정밀성 보장
+
+**enhance_prompt_gemini** (프롬프트 카테고리)
+- Google Gemini API 프롬프팅 전략 적용
+- Few-Shot 예시, 출력 형식 명시화
+- 컨텍스트 최적화, 프롬프트 분해
+- 에이전트별 맞춤 개선
+
+#### 통합 효과
+
+- 총 도구 수: 38개 → 40개 (+5%)
+- 복잡한 문제 해결 능력 대폭 향상
+- 프롬프트 품질 최적화
+- Vibe 프레임워크와 완벽한 통합
+
+---
+
 ## v1.3.0 업데이트
 
 ### 신규 기능
@@ -281,16 +308,17 @@ Claude Desktop 또는 다른 MCP 클라이언트의 설정 파일에 추가:
 
 ## 도구 카탈로그
 
-### 전체 도구 목록 (38개)
+### 전체 도구 목록 (40개)
 
 | 카테고리 | 도구 수 | 도구 목록 |
 |----------|---------|-----------|
 | **메모리** | 10 | save_memory, recall_memory, list_memories, search_memories, delete_memory, update_memory, auto_save_context, restore_session_context, prioritize_memory, start_session |
 | **시맨틱** | 2 | find_symbol, find_references |
 | **사고** | 6 | create_thinking_chain, analyze_problem, step_by_step_analysis, break_down_problem, think_aloud_process, format_as_plan |
+| **추론** 🆕 | 1 | **apply_reasoning_framework** - 9단계 추론 프레임워크 |
 | **코드 품질** | 6 | analyze_complexity, validate_code_quality, check_coupling_cohesion, suggest_improvements, apply_quality_rules, get_coding_guide |
 | **계획** | 4 | generate_prd, create_user_stories, analyze_requirements, feature_roadmap |
-| **프롬프트** | 2 | enhance_prompt, analyze_prompt |
+| **프롬프트** | 3 | enhance_prompt, analyze_prompt, **enhance_prompt_gemini** 🆕 |
 | **브라우저** | 2 | monitor_console_logs, inspect_network_requests |
 | **UI** | 1 | preview_ui_ascii |
 | **시간** | 1 | get_current_time |
@@ -326,7 +354,7 @@ graph TB
     end
 
     subgraph "MCP Server"
-        B[Hi-AI v1.3.0]
+        B[Hi-AI v1.4.0]
     end
 
     subgraph "Core Libraries"
@@ -532,7 +560,7 @@ MIT License - 자유롭게 사용, 수정, 배포 가능
   author = {Su},
   title = {Hi-AI: Natural Language MCP Server for AI-Assisted Development},
   year = {2024},
-  version = {1.3.0},
+  version = {1.4.0},
   url = {https://github.com/su-record/hi-ai}
 }
 ```
@@ -547,9 +575,9 @@ MIT License - 자유롭게 사용, 수정, 배포 가능
 
 <br>
 
-**Hi-AI v1.3.0**
+**Hi-AI v1.4.0**
 
-프로젝트 캐싱 · SQLite 메모리 · Python 지원 · 100% 테스트 커버리지
+9단계 추론 프레임워크 · Gemini 프롬프팅 전략 · 40개 전문 도구 · 100% 테스트 커버리지
 
 Made with ❤️ by [Su](https://github.com/su-record)
 
