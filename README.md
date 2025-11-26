@@ -11,7 +11,7 @@
 
 **Model Context Protocol 기반 AI 개발 어시스턴트**
 
-TypeScript + Python 지원 · 40개 전문 도구 · 지능형 메모리 관리 · 코드 분석 · 추론 프레임워크
+TypeScript + Python 지원 · 36개 전문 도구 · 지능형 메모리 관리 · 코드 분석 · 추론 프레임워크
 
 <a href="https://glama.ai/mcp/servers/@su-record/hi-ai">
   <img width="380" height="200" src="https://glama.ai/mcp/servers/@su-record/hi-ai/badge" alt="Hi-AI MCP server" />
@@ -195,7 +195,7 @@ AST 기반 코드 분석 및 탐색 도구:
 
 #### 통합 효과
 
-- 총 도구 수: 38개 → 40개 (+5%)
+- 총 도구 수: 34개 → 36개 (+6%)
 - 복잡한 문제 해결 능력 대폭 향상
 - 프롬프트 품질 최적화
 - Vibe 프레임워크와 완벽한 통합
@@ -308,7 +308,7 @@ Claude Desktop 또는 다른 MCP 클라이언트의 설정 파일에 추가:
 
 ## 도구 카탈로그
 
-### 전체 도구 목록 (40개)
+### 전체 도구 목록 (36개)
 
 | 카테고리 | 도구 수 | 도구 목록 |
 |----------|---------|-----------|
@@ -577,7 +577,7 @@ MIT License - 자유롭게 사용, 수정, 배포 가능
 
 **Hi-AI v1.4.0**
 
-9단계 추론 프레임워크 · Gemini 프롬프팅 전략 · 40개 전문 도구 · 100% 테스트 커버리지
+9단계 추론 프레임워크 · Gemini 프롬프팅 전략 · 36개 전문 도구 · 100% 테스트 커버리지
 
 Made with ❤️ by [Su](https://github.com/su-record)
 
