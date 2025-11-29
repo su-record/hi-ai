@@ -51,7 +51,7 @@ export const checkCouplingCohesionDefinition: ToolDefinition = {
   }
 };
 
-import { Project, ScriptKind } from "ts-morph";
+import { Project, ScriptKind, SyntaxKind, CallExpression } from "ts-morph";
 import * as ts from "typescript";
 
 const AST_PROJECT = new Project({
@@ -81,7 +81,7 @@ export async function checkCouplingCohesion(args: { code: string; type?: string;
     });
     // Import/Require 분석
     const importDecls = sourceFile.getImportDeclarations();
-    const requireCalls = sourceFile.getDescendantsOfKind(ts.SyntaxKind.CallExpression).filter(call => call.getExpression().getText() === 'require');
+    const requireCalls = sourceFile.getDescendantsOfKind(SyntaxKind.CallExpression).filter((call: CallExpression) => call.getExpression().getText() === 'require');
     // 클래스/함수/모듈 구조 분석
     const classDecls = sourceFile.getClasses();
     const funcDecls = sourceFile.getFunctions();

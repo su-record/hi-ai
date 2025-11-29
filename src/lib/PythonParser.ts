@@ -9,6 +9,35 @@ import os from 'os';
 
 const execAsync = promisify(exec);
 
+// Determine Python command based on platform
+function getPythonCommand(): string {
+  if (process.platform === 'win32') {
+    // Try common Windows Python locations
+    const pythonPaths = [
+      `${process.env.LOCALAPPDATA}\\Programs\\Python\\Python312\\python.exe`,
+      `${process.env.LOCALAPPDATA}\\Programs\\Python\\Python311\\python.exe`,
+      `${process.env.LOCALAPPDATA}\\Programs\\Python\\Python310\\python.exe`,
+      'py',  // Python Launcher
+      'python'
+    ];
+
+    for (const pythonPath of pythonPaths) {
+      try {
+        const fs = require('fs');
+        if (pythonPath.includes('\\') && fs.existsSync(pythonPath)) {
+          return `"${pythonPath}"`;
+        }
+      } catch {
+        continue;
+      }
+    }
+    return 'python';
+  }
+  return 'python3';
+}
+
+const PYTHON_CMD = getPythonCommand();
+
 export interface PythonSymbol {
   name: string;
   kind: 'function' | 'class' | 'variable' | 'import';
@@ -217,7 +246,7 @@ if __name__ == '__main__':
       await writeFile(codePath, code);
 
       // Execute Python script
-      const { stdout, stderr } = await execAsync(`python3 "${scriptPath}" ${action} < "${codePath}"`, {
+      const { stdout, stderr } = await execAsync(`${PYTHON_CMD} "${scriptPath}" ${action} < "${codePath}"`, {
         maxBuffer: 10 * 1024 * 1024, // 10MB
         timeout: 30000 // 30 second timeout
       });

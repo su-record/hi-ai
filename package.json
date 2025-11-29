@@ -1,7 +1,7 @@
 {
   "name": "@su-record/hi-ai",
-  "version": "1.4.0",
-  "description": "Model Context Protocol based AI development assistant with 36 specialized tools for TypeScript, JavaScript, and Python projects - Now with 9-step reasoning framework and Gemini prompting strategies",
+  "version": "2.0.0",
+  "description": "Model Context Protocol based AI development assistant with 34 specialized tools featuring Knowledge Graph memory, multi-strategy search, and code dependency analysis",
   "displayName": "Hi-AI",
   "icon": "https://raw.githubusercontent.com/su-record/hi-ai/main/icon.png",
   "homepage": "https://github.com/su-record/hi-ai",
@@ -39,6 +39,8 @@
     "semantic-analysis",
     "code-quality",
     "memory-management",
+    "knowledge-graph",
+    "dependency-analysis",
     "project-planning",
     "claude",
     "anthropic"
@@ -53,7 +55,6 @@
     "better-sqlite3": "^12.4.1",
     "chalk": "^5.3.0",
     "glob": "^11.0.3",
-    "puppeteer-core": "^22.15.0",
     "ts-morph": "^26.0.0"
   },
   "devDependencies": {
