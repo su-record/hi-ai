@@ -15,7 +15,11 @@ export const deleteMemoryDefinition: ToolDefinition = {
   },
   annotations: {
     title: 'Delete Memory',
-    audience: ['user', 'assistant']
+    audience: ['user', 'assistant'],
+    readOnlyHint: false,
+    destructiveHint: true,
+    idempotentHint: true,
+    openWorldHint: false
   }
 };
 

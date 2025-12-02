@@ -17,7 +17,11 @@ export const saveMemoryDefinition: ToolDefinition = {
   },
   annotations: {
     title: 'Save Memory',
-    audience: ['user', 'assistant']
+    audience: ['user', 'assistant'],
+    readOnlyHint: false,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false
   }
 };
 

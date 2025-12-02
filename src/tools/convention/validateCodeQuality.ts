@@ -48,7 +48,11 @@ export const validateCodeQualityDefinition: ToolDefinition = {
   },
   annotations: {
     title: 'Validate Code Quality',
-    audience: ['user', 'assistant']
+    audience: ['user', 'assistant'],
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false
   }
 };
 

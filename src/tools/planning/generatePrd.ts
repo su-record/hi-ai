@@ -19,7 +19,11 @@ export const generatePrdDefinition: ToolDefinition = {
   },
   annotations: {
     title: 'Generate PRD',
-    audience: ['user', 'assistant']
+    audience: ['user', 'assistant'],
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false
   }
 };
 

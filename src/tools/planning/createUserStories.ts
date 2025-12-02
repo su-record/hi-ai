@@ -30,7 +30,11 @@ export const createUserStoriesDefinition: ToolDefinition = {
   },
   annotations: {
     title: 'Create User Stories',
-    audience: ['user', 'assistant']
+    audience: ['user', 'assistant'],
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false
   }
 };
 

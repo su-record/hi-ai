@@ -31,7 +31,11 @@ export const findReferencesDefinition: ToolDefinition = {
   },
   annotations: {
     title: 'Find References',
-    audience: ['user', 'assistant']
+    audience: ['user', 'assistant'],
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false
   }
 };
 

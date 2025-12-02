@@ -19,7 +19,11 @@ export const analyzePromptDefinition: ToolDefinition = {
   },
   annotations: {
     title: 'Analyze Prompt',
-    audience: ['user', 'assistant']
+    audience: ['user', 'assistant'],
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false
   }
 };
 

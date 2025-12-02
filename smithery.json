@@ -1,20 +1,73 @@
 {
+  "$schema": "https://smithery.ai/schema/smithery.json",
   "name": "@su-record/hi-ai",
-  "description": "AI 어렵지 않아! '하이아이' 한마디로 시작하는 34개 도구의 완벽한 AI 개발 킷",
-  "version": "1.2.0",
+  "displayName": "Hi-AI",
+  "description": "AI development assistant with 36 specialized tools for code analysis, memory management, sequential thinking, and project planning",
+  "version": "1.4.0",
   "author": "Su",
   "license": "MIT",
-  "categories": [
-    "development", "ai-collaboration", "memory-management", "code-quality",
-    "browser-automation", "sequential-thinking", "planning-tools", "productivity"
-  ],
   "homepage": "https://github.com/su-record/hi-ai",
   "repository": "https://github.com/su-record/hi-ai",
+  "icon": "https://raw.githubusercontent.com/su-record/hi-ai/main/icon.png",
   "readme": "https://github.com/su-record/hi-ai/blob/main/README.md",
-  "icon": "🤖",
+  "categories": [
+    "development",
+    "ai-collaboration",
+    "memory-management",
+    "code-quality",
+    "browser-automation",
+    "sequential-thinking",
+    "planning-tools",
+    "productivity"
+  ],
   "capabilities": {
     "tools": true,
-    "resources": false,
-    "prompts": false
+    "resources": true,
+    "prompts": true
+  },
+  "configSchema": {
+    "type": "object",
+    "properties": {
+      "memoryEnabled": {
+        "type": "boolean",
+        "description": "Enable persistent memory storage",
+        "default": true
+      },
+      "browserPath": {
+        "type": "string",
+        "description": "Custom Chrome/Chromium browser path for browser tools"
+      },
+      "maxMemoryItems": {
+        "type": "number",
+        "description": "Maximum number of memory items to store",
+        "default": 1000
+      }
+    },
+    "required": []
+  },
+  "startCommand": {
+    "type": "stdio",
+    "configSchema": {
+      "type": "object",
+      "properties": {
+        "memoryEnabled": {
+          "type": "boolean",
+          "description": "Enable persistent memory storage",
+          "default": true
+        },
+        "browserPath": {
+          "type": "string",
+          "description": "Custom Chrome/Chromium browser path for browser tools"
+        },
+        "maxMemoryItems": {
+          "type": "number",
+          "description": "Maximum number of memory items to store",
+          "default": 1000
+        }
+      },
+      "required": []
+    },
+    "command": "node",
+    "args": ["dist/index.js"]
   }
 }

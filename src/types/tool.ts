@@ -12,6 +12,10 @@ export interface ToolAnnotation {
   audience?: string[];
   title?: string;
   progress?: number;
+  readOnlyHint?: boolean;
+  destructiveHint?: boolean;
+  idempotentHint?: boolean;
+  openWorldHint?: boolean;
 }
 
 export interface ToolDefinition {

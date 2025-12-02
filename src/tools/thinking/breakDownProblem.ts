@@ -32,7 +32,11 @@ export const breakDownProblemDefinition: ToolDefinition = {
   },
   annotations: {
     title: 'Break Down Problem',
-    audience: ['user', 'assistant']
+    audience: ['user', 'assistant'],
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false
   }
 };
 

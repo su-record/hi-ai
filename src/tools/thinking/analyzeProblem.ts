@@ -15,7 +15,11 @@ export const analyzeProblemDefinition: ToolDefinition = {
   },
   annotations: {
     title: 'Analyze Problem',
-    audience: ['user', 'assistant']
+    audience: ['user', 'assistant'],
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false
   }
 };
 

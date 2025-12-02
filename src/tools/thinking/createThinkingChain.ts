@@ -15,7 +15,11 @@ export const createThinkingChainDefinition: ToolDefinition = {
   },
   annotations: {
     title: 'Create Thinking Chain',
-    audience: ['user', 'assistant']
+    audience: ['user', 'assistant'],
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false
   }
 };
 

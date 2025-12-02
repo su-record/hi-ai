@@ -17,7 +17,11 @@ export const formatAsPlanDefinition: ToolDefinition = {
   },
   annotations: {
     title: 'Format as Plan',
-    audience: ['user', 'assistant']
+    audience: ['user', 'assistant'],
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false
   }
 };
 

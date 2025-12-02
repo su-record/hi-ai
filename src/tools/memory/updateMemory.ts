@@ -17,7 +17,11 @@ export const updateMemoryDefinition: ToolDefinition = {
   },
   annotations: {
     title: 'Update Memory',
-    audience: ['user', 'assistant']
+    audience: ['user', 'assistant'],
+    readOnlyHint: false,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false
   }
 };
 

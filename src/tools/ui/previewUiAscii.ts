@@ -50,7 +50,11 @@ export const previewUiAsciiDefinition: ToolDefinition = {
   },
   annotations: {
     title: 'Preview UI (ASCII)',
-    audience: ['user', 'assistant']
+    audience: ['user', 'assistant'],
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false
   }
 };
 

@@ -16,7 +16,11 @@ export const stepByStepAnalysisDefinition: ToolDefinition = {
   },
   annotations: {
     title: 'Step-by-Step Analysis',
-    audience: ['user', 'assistant']
+    audience: ['user', 'assistant'],
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false
   }
 };
 

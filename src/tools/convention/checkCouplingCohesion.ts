@@ -47,7 +47,11 @@ export const checkCouplingCohesionDefinition: ToolDefinition = {
   },
   annotations: {
     title: 'Check Coupling & Cohesion',
-    audience: ['user', 'assistant']
+    audience: ['user', 'assistant'],
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false
   }
 };
 

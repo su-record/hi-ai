@@ -53,7 +53,11 @@ export const getCodingGuideDefinition: ToolDefinition = {
   },
   annotations: {
     title: 'Get Coding Guide',
-    audience: ['user', 'assistant']
+    audience: ['user', 'assistant'],
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false
   }
 };
 

@@ -21,7 +21,11 @@ export const autoSaveContextDefinition: ToolDefinition = {
   },
   annotations: {
     title: 'Auto-Save Context',
-    audience: ['user', 'assistant']
+    audience: ['user', 'assistant'],
+    readOnlyHint: false,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false
   }
 };
 

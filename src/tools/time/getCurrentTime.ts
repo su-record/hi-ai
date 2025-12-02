@@ -15,7 +15,11 @@ export const getCurrentTimeDefinition: ToolDefinition = {
   },
   annotations: {
     title: 'Get Current Time',
-    audience: ['user', 'assistant']
+    audience: ['user', 'assistant'],
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: false,
+    openWorldHint: false
   }
 };
 

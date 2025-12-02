@@ -16,7 +16,11 @@ export const searchMemoriesDefinition: ToolDefinition = {
   },
   annotations: {
     title: 'Search Memories',
-    audience: ['user', 'assistant']
+    audience: ['user', 'assistant'],
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false
   }
 };
 

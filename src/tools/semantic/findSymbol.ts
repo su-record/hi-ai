@@ -35,7 +35,11 @@ export const findSymbolDefinition: ToolDefinition = {
   },
   annotations: {
     title: 'Find Symbol',
-    audience: ['user', 'assistant']
+    audience: ['user', 'assistant'],
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false
   }
 };
 

@@ -39,7 +39,11 @@ export const featureRoadmapDefinition: ToolDefinition = {
   },
   annotations: {
     title: 'Feature Roadmap',
-    audience: ['user', 'assistant']
+    audience: ['user', 'assistant'],
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false
   }
 };
 

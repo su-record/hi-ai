@@ -5,6 +5,10 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
+  ListPromptsRequestSchema,
+  GetPromptRequestSchema,
+  ListResourcesRequestSchema,
+  ReadResourceRequestSchema,
   ErrorCode,
   McpError,
   CallToolResult
@@ -214,6 +218,222 @@ function createServer() {
   // List all available tools
   server.setRequestHandler(ListToolsRequestSchema, async () => {
     return { tools };
+  });
+
+  // Prompts - predefined workflows
+  const prompts = [
+    {
+      name: 'code-review',
+      description: 'Comprehensive code review with quality analysis',
+      arguments: [
+        { name: 'code', description: 'Code to review', required: true },
+        { name: 'language', description: 'Programming language', required: false }
+      ]
+    },
+    {
+      name: 'problem-solver',
+      description: 'Step-by-step problem analysis and solution planning',
+      arguments: [
+        { name: 'problem', description: 'Problem description', required: true },
+        { name: 'context', description: 'Additional context', required: false }
+      ]
+    },
+    {
+      name: 'project-kickoff',
+      description: 'Start a new project with PRD, user stories, and roadmap',
+      arguments: [
+        { name: 'projectName', description: 'Name of the project', required: true },
+        { name: 'vision', description: 'Project vision and goals', required: true }
+      ]
+    }
+  ];
+
+  server.setRequestHandler(ListPromptsRequestSchema, async () => {
+    return { prompts };
+  });
+
+  server.setRequestHandler(GetPromptRequestSchema, async (request) => {
+    const { name, arguments: args } = request.params;
+
+    switch (name) {
+      case 'code-review':
+        return {
+          messages: [
+            {
+              role: 'user',
+              content: {
+                type: 'text',
+                text: `Please perform a comprehensive code review for the following code:\n\n${args?.code || ''}\n\nAnalyze for:\n1. Code quality and best practices\n2. Complexity and maintainability\n3. Potential improvements\n4. Security considerations`
+              }
+            }
+          ]
+        };
+      case 'problem-solver':
+        return {
+          messages: [
+            {
+              role: 'user',
+              content: {
+                type: 'text',
+                text: `I need help solving this problem:\n\n${args?.problem || ''}\n\nContext: ${args?.context || 'None provided'}\n\nPlease:\n1. Break down the problem into sub-problems\n2. Analyze each component step-by-step\n3. Propose a structured solution plan`
+              }
+            }
+          ]
+        };
+      case 'project-kickoff':
+        return {
+          messages: [
+            {
+              role: 'user',
+              content: {
+                type: 'text',
+                text: `Let's kick off a new project:\n\nProject Name: ${args?.projectName || 'Unnamed Project'}\nVision: ${args?.vision || ''}\n\nPlease help me create:\n1. A Product Requirements Document (PRD)\n2. User stories with acceptance criteria\n3. A development roadmap`
+              }
+            }
+          ]
+        };
+      default:
+        throw new McpError(ErrorCode.InvalidRequest, `Unknown prompt: ${name}`);
+    }
+  });
+
+  // Resources - project information and guides
+  const resources = [
+    {
+      uri: 'hi-ai://guides/quality-rules',
+      name: 'Code Quality Rules',
+      description: 'Best practices and quality rules for code development',
+      mimeType: 'text/plain'
+    },
+    {
+      uri: 'hi-ai://guides/naming-conventions',
+      name: 'Naming Conventions',
+      description: 'Naming conventions for variables, functions, and components',
+      mimeType: 'text/plain'
+    },
+    {
+      uri: 'hi-ai://info/capabilities',
+      name: 'Hi-AI Capabilities',
+      description: 'Overview of Hi-AI tools and features',
+      mimeType: 'text/plain'
+    }
+  ];
+
+  server.setRequestHandler(ListResourcesRequestSchema, async () => {
+    return { resources };
+  });
+
+  server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
+    const { uri } = request.params;
+
+    switch (uri) {
+      case 'hi-ai://guides/quality-rules':
+        return {
+          contents: [{
+            uri,
+            mimeType: 'text/plain',
+            text: `# Code Quality Rules
+
+## Complexity
+- Max Cyclomatic Complexity: 10
+- Max Cognitive Complexity: 15
+- Max Function Lines: 20
+- Max Nesting Depth: 3
+- Max Parameters: 5
+
+## Coupling
+- Max Dependencies: 7
+- Max Fan-Out: 5
+- Prevent Circular Dependencies
+
+## Maintainability
+- No Magic Numbers
+- Consistent Naming
+- Proper Error Handling
+- Type Safety`
+          }]
+        };
+      case 'hi-ai://guides/naming-conventions':
+        return {
+          contents: [{
+            uri,
+            mimeType: 'text/plain',
+            text: `# Naming Conventions
+
+## Variables
+- Use nouns: userList, userData
+
+## Functions
+- Use verb+noun: fetchData, updateUser
+
+## Event Handlers
+- Use handle prefix: handleClick, handleSubmit
+
+## Booleans
+- Use is/has/can prefix: isLoading, hasError, canEdit
+
+## Constants
+- Use UPPER_SNAKE_CASE: MAX_RETRY_COUNT, API_TIMEOUT
+
+## Components
+- Use PascalCase: UserProfile, HeaderSection
+
+## Hooks
+- Use use prefix: useUserData, useAuth`
+          }]
+        };
+      case 'hi-ai://info/capabilities':
+        return {
+          contents: [{
+            uri,
+            mimeType: 'text/plain',
+            text: `# Hi-AI Capabilities
+
+## Tool Categories (34 tools)
+
+### Time Utilities
+- get_current_time
+
+### Semantic Code Analysis
+- find_symbol, find_references, analyze_dependency_graph
+
+### Sequential Thinking (4 tools)
+- create_thinking_chain, analyze_problem
+- step_by_step_analysis, format_as_plan
+
+### Memory Management - Basic (6 tools)
+- save_memory, recall_memory, list_memories
+- delete_memory, update_memory, prioritize_memory
+
+### Memory Management - Graph (4 tools)
+- link_memories, get_memory_graph
+- search_memories_advanced, create_memory_timeline
+
+### Code Quality (6 tools)
+- get_coding_guide, apply_quality_rules
+- validate_code_quality, analyze_complexity
+- check_coupling_cohesion, suggest_improvements
+
+### Project Planning (4 tools)
+- generate_prd, create_user_stories
+- analyze_requirements, feature_roadmap
+
+### Prompt Enhancement (3 tools)
+- enhance_prompt, analyze_prompt, enhance_prompt_gemini
+
+### Reasoning
+- apply_reasoning_framework
+
+### Analytics
+- get_usage_analytics
+
+### UI Preview
+- preview_ui_ascii`
+          }]
+        };
+      default:
+        throw new McpError(ErrorCode.InvalidRequest, `Unknown resource: ${uri}`);
+    }
   });
 
   // Handle tool execution - Dynamic dispatch (no switch statement)

@@ -16,7 +16,11 @@ export const listMemoriesDefinition: ToolDefinition = {
   },
   annotations: {
     title: 'List Memories',
-    audience: ['user', 'assistant']
+    audience: ['user', 'assistant'],
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false
   }
 };
 

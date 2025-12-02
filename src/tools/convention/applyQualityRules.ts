@@ -48,7 +48,11 @@ export const applyQualityRulesDefinition: ToolDefinition = {
   },
   annotations: {
     title: 'Apply Quality Rules',
-    audience: ['user', 'assistant']
+    audience: ['user', 'assistant'],
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false
   }
 };
 

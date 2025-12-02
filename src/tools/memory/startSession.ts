@@ -51,7 +51,11 @@ export const startSessionDefinition: ToolDefinition = {
   },
   annotations: {
     title: 'Start Session',
-    audience: ['user', 'assistant']
+    audience: ['user', 'assistant'],
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: false,
+    openWorldHint: false
   }
 };
 

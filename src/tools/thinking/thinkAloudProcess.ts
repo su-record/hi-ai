@@ -16,7 +16,11 @@ export const thinkAloudProcessDefinition: ToolDefinition = {
   },
   annotations: {
     title: 'Think Aloud',
-    audience: ['user', 'assistant']
+    audience: ['user', 'assistant'],
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false
   }
 };
 

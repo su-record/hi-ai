@@ -17,7 +17,11 @@ export const restoreSessionContextDefinition: ToolDefinition = {
   },
   annotations: {
     title: 'Restore Session',
-    audience: ['user', 'assistant']
+    audience: ['user', 'assistant'],
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false
   }
 };
 

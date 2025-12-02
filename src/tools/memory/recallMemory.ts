@@ -16,7 +16,11 @@ export const recallMemoryDefinition: ToolDefinition = {
   },
   annotations: {
     title: 'Recall Memory',
-    audience: ['user', 'assistant']
+    audience: ['user', 'assistant'],
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false
   }
 };
 

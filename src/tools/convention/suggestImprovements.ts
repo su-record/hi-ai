@@ -16,7 +16,11 @@ export const suggestImprovementsDefinition: ToolDefinition = {
   },
   annotations: {
     title: 'Suggest Improvements',
-    audience: ['user', 'assistant']
+    audience: ['user', 'assistant'],
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false
   }
 };
 

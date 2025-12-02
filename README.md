@@ -173,6 +173,68 @@ AST 기반 코드 분석 및 탐색 도구:
 
 ---
 
+## Hi-GCloud 연동
+
+Hi-AI는 [hi-gcloud](https://github.com/su-record/hi-gcloud) MCP와 함께 사용하면 강력한 GCP 운영 + 코드 수정 워크플로우를 제공합니다.
+
+### 연동 방식
+
+hi-gcloud에서 에러를 발견하면 hi-ai 도구를 자동으로 추천합니다:
+
+```
+📋 Cloud Run 로그: my-api
+🔴 3개의 에러가 발견되었습니다.
+
+💡 hi-ai 연동 가능: 에러 분석이 필요하면 analyze_problem 도구로 원인을 분석하고,
+   관련 코드를 찾아 수정 방안을 제시할 수 있습니다.
+```
+
+### 워크플로우 예시
+
+```
+User: "배포가 실패했어"
+
+[hi-gcloud]
+→ gcp_run_logs로 에러 로그 조회
+→ 에러 3건 발견, hi-ai 연동 힌트 제공
+
+[hi-ai 자동 연동]
+→ analyze_problem으로 에러 원인 분석
+→ find_symbol로 관련 코드 위치 파악
+→ suggest_improvements로 수정 방안 제시
+→ save_memory로 해결 방법 저장 (재발 방지)
+```
+
+### 설치
+
+두 MCP를 함께 설치하면 자동으로 연동됩니다:
+
+```json
+{
+  "mcpServers": {
+    "hi-ai": {
+      "command": "npx",
+      "args": ["-y", "@su-record/hi-ai"]
+    },
+    "hi-gcloud": {
+      "command": "npx",
+      "args": ["-y", "@polin-go/hi-gcloud"]
+    }
+  }
+}
+```
+
+### 연동 도구 매핑
+
+| hi-gcloud 상황 | hi-ai 추천 도구 |
+|---------------|-----------------|
+| 에러 로그 발견 | `analyze_problem`, `find_symbol` |
+| 배포 실패 | `step_by_step_analysis`, `suggest_improvements` |
+| 성능 문제 | `analyze_complexity`, `check_coupling_cohesion` |
+| 비용 증가 | `format_as_plan` |
+
+---
+
 ## v2.0.0 업데이트
 
 ### 주요 변경사항

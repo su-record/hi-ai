@@ -29,7 +29,11 @@ export const enhancePromptGeminiDefinition: ToolDefinition = {
   },
   annotations: {
     title: 'Enhance Prompt (Gemini Strategies)',
-    audience: ['user', 'assistant']
+    audience: ['user', 'assistant'],
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false
   }
 };
 
