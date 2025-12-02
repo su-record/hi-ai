@@ -36,6 +36,14 @@ export const getUsageAnalyticsDefinition: ToolDefinition = {
         description: '상세 정보 포함 여부 (기본값: false)'
       }
     }
+  },
+  annotations: {
+    title: 'Get Usage Analytics',
+    audience: ['user', 'assistant'],
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false
   }
 };
 

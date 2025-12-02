@@ -44,6 +44,14 @@ export const analyzeDependencyGraphDefinition: ToolDefinition = {
       }
     },
     required: ['projectPath']
+  },
+  annotations: {
+    title: 'Analyze Dependency Graph',
+    audience: ['user', 'assistant'],
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false
   }
 };
 

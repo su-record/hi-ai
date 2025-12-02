@@ -37,6 +37,14 @@ export const createMemoryTimelineDefinition: ToolDefinition = {
         enum: ['day', 'week', 'month', 'category']
       }
     }
+  },
+  annotations: {
+    title: 'Create Memory Timeline',
+    audience: ['user', 'assistant'],
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false
   }
 };
 

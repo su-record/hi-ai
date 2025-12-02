@@ -53,6 +53,14 @@ export const searchMemoriesAdvancedDefinition: ToolDefinition = {
       }
     },
     required: ['query']
+  },
+  annotations: {
+    title: 'Search Memories (Advanced)',
+    audience: ['user', 'assistant'],
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false
   }
 };
 

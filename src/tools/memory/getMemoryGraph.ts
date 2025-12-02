@@ -35,6 +35,14 @@ export const getMemoryGraphDefinition: ToolDefinition = {
         enum: ['tree', 'list', 'mermaid']
       }
     }
+  },
+  annotations: {
+    title: 'Get Memory Graph',
+    audience: ['user', 'assistant'],
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false
   }
 };
 

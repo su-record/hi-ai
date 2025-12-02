@@ -40,6 +40,14 @@ export const linkMemoriesDefinition: ToolDefinition = {
       }
     },
     required: ['sourceKey', 'targetKey', 'relationType']
+  },
+  annotations: {
+    title: 'Link Memories',
+    audience: ['user', 'assistant'],
+    readOnlyHint: false,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false
   }
 };
 
