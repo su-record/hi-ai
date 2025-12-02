@@ -31,6 +31,8 @@ import { createThinkingChainDefinition, createThinkingChain } from './tools/thin
 import { analyzeProblemDefinition, analyzeProblem } from './tools/thinking/analyzeProblem.js';
 import { stepByStepAnalysisDefinition, stepByStepAnalysis } from './tools/thinking/stepByStepAnalysis.js';
 import { formatAsPlanDefinition, formatAsPlan } from './tools/thinking/formatAsPlan.js';
+import { breakDownProblemDefinition, breakDownProblem } from './tools/thinking/breakDownProblem.js';
+import { thinkAloudProcessDefinition, thinkAloudProcess } from './tools/thinking/thinkAloudProcess.js';
 
 // Memory Management (Basic)
 import { saveMemoryDefinition, saveMemory } from './tools/memory/saveMemory.js';
@@ -39,6 +41,10 @@ import { listMemoriesDefinition, listMemories } from './tools/memory/listMemorie
 import { deleteMemoryDefinition, deleteMemory } from './tools/memory/deleteMemory.js';
 import { updateMemoryDefinition, updateMemory } from './tools/memory/updateMemory.js';
 import { prioritizeMemoryDefinition, prioritizeMemory } from './tools/memory/prioritizeMemory.js';
+import { searchMemoriesDefinition, searchMemoriesHandler } from './tools/memory/searchMemories.js';
+import { autoSaveContextDefinition, autoSaveContext } from './tools/memory/autoSaveContext.js';
+import { restoreSessionContextDefinition, restoreSessionContext } from './tools/memory/restoreSessionContext.js';
+import { startSessionDefinition, startSession } from './tools/memory/startSession.js';
 
 // Memory Management (Graph - v2.0 NEW)
 import { linkMemoriesDefinition, linkMemories } from './tools/memory/linkMemories.js';
@@ -81,13 +87,17 @@ const tools = [
   getCurrentTimeDefinition,
   previewUiAsciiDefinition,
 
-  // Memory Management - Basic (6)
+  // Memory Management - Basic (10)
   saveMemoryDefinition,
   recallMemoryDefinition,
   updateMemoryDefinition,
   deleteMemoryDefinition,
   listMemoriesDefinition,
   prioritizeMemoryDefinition,
+  searchMemoriesDefinition,
+  autoSaveContextDefinition,
+  restoreSessionContextDefinition,
+  startSessionDefinition,
 
   // Memory Management - Graph (4) - v2.0 NEW
   linkMemoriesDefinition,
@@ -110,11 +120,13 @@ const tools = [
   checkCouplingCohesionDefinition,
   suggestImprovementsDefinition,
 
-  // Thinking & Planning (8)
+  // Thinking & Planning (10)
   createThinkingChainDefinition,
   analyzeProblemDefinition,
   stepByStepAnalysisDefinition,
   formatAsPlanDefinition,
+  breakDownProblemDefinition,
+  thinkAloudProcessDefinition,
   generatePrdDefinition,
   createUserStoriesDefinition,
   analyzeRequirementsDefinition,
@@ -132,7 +144,7 @@ const tools = [
   getUsageAnalyticsDefinition
 ];
 
-// Total: 34 tools
+// Total: 40 tools
 
 // ============================================================================
 // TOOL HANDLER REGISTRY - Dynamic Dispatch Pattern (No Switch Statement)
@@ -152,6 +164,10 @@ const toolHandlers: Record<string, ToolHandler> = {
   'delete_memory': deleteMemory,
   'list_memories': listMemories,
   'prioritize_memory': prioritizeMemory,
+  'search_memories': searchMemoriesHandler,
+  'auto_save_context': autoSaveContext,
+  'restore_session_context': restoreSessionContext,
+  'start_session': startSession,
 
   // Memory - Graph (v2.0 NEW)
   'link_memories': linkMemories,
@@ -177,6 +193,8 @@ const toolHandlers: Record<string, ToolHandler> = {
   'analyze_problem': analyzeProblem,
   'step_by_step_analysis': stepByStepAnalysis,
   'format_as_plan': formatAsPlan,
+  'break_down_problem': breakDownProblem,
+  'think_aloud_process': thinkAloudProcess,
 
   // Planning
   'generate_prd': generatePrd,
@@ -389,21 +407,27 @@ function createServer() {
             mimeType: 'text/plain',
             text: `# Hi-AI Capabilities
 
-## Tool Categories (34 tools)
+## Tool Categories (40 tools)
 
-### Time Utilities
+### Time Utilities (1)
 - get_current_time
 
-### Semantic Code Analysis
+### UI Preview (1)
+- preview_ui_ascii
+
+### Semantic Code Analysis (3)
 - find_symbol, find_references, analyze_dependency_graph
 
-### Sequential Thinking (4 tools)
+### Sequential Thinking (6 tools)
 - create_thinking_chain, analyze_problem
 - step_by_step_analysis, format_as_plan
+- break_down_problem, think_aloud_process
 
-### Memory Management - Basic (6 tools)
+### Memory Management - Basic (10 tools)
 - save_memory, recall_memory, list_memories
 - delete_memory, update_memory, prioritize_memory
+- search_memories, auto_save_context
+- restore_session_context, start_session
 
 ### Memory Management - Graph (4 tools)
 - link_memories, get_memory_graph
@@ -421,14 +445,11 @@ function createServer() {
 ### Prompt Enhancement (3 tools)
 - enhance_prompt, analyze_prompt, enhance_prompt_gemini
 
-### Reasoning
+### Reasoning (1)
 - apply_reasoning_framework
 
-### Analytics
-- get_usage_analytics
-
-### UI Preview
-- preview_ui_ascii`
+### Analytics (1)
+- get_usage_analytics`
           }]
         };
       default:
