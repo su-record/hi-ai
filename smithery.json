@@ -2,8 +2,8 @@
   "$schema": "https://smithery.ai/schema/smithery.json",
   "name": "@su-record/hi-ai",
   "displayName": "Hi-AI",
-  "description": "AI development assistant with 40 specialized tools for code analysis, memory management, sequential thinking, and project planning",
-  "version": "2.0.0",
+  "description": "AI development assistant with 36 specialized tools for code analysis, memory management, sequential thinking, and project planning",
+  "version": "1.4.0",
   "author": "Su",
   "license": "MIT",
   "homepage": "https://github.com/su-record/hi-ai",
@@ -15,6 +15,7 @@
     "ai-collaboration",
     "memory-management",
     "code-quality",
+    "browser-automation",
     "sequential-thinking",
     "planning-tools",
     "productivity"
@@ -31,6 +32,10 @@
         "type": "boolean",
         "description": "Enable persistent memory storage",
         "default": true
+      },
+      "browserPath": {
+        "type": "string",
+        "description": "Custom Chrome/Chromium browser path for browser tools"
       },
       "maxMemoryItems": {
         "type": "number",
@@ -49,6 +54,10 @@
           "type": "boolean",
           "description": "Enable persistent memory storage",
           "default": true
+        },
+        "browserPath": {
+          "type": "string",
+          "description": "Custom Chrome/Chromium browser path for browser tools"
         },
         "maxMemoryItems": {
           "type": "number",
