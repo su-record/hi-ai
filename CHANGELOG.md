@@ -1,5 +1,50 @@
 # 변경 이력 (Changelog)
 
+## [2.1.0] - 2025-01-20
+
+### ✨ 새로운 기능
+- **세션 컨텍스트 자동 주입**
+  - `get_session_context` 도구 추가: 세션 시작 시 이전 메모리, 지식 그래프, 타임라인을 한 번에 조회
+  - `hi-ai://context/session` 리소스 추가: 클라이언트가 리소스를 읽을 때 자동으로 컨텍스트 제공
+  - LLM이 세션 시작 시 자동으로 컨텍스트를 파악할 수 있도록 도구 description 개선
+
+### 🔄 변경사항
+- **도구 설명 개선**
+  - `save_memory`: 지식 그래프 연결 안내 추가
+  - `recall_memory`: get_session_context 사용 권장 안내
+  - `list_memories`: 세션 시작 시 get_session_context 사용 권장
+
+- **리소스 확장**
+  - `hi-ai://context/session`: 세션 컨텍스트 자동 로드 (메모리 + 그래프)
+  - `hi-ai://info/capabilities`: v2.1 도구 목록으로 업데이트
+
+### 📊 통계
+- 총 도구 수: 34개 → 35개 (+1)
+- 총 리소스 수: 3개 → 4개 (+1)
+
+---
+
+## [2.0.0] - 2025-01-19
+
+### ✨ 새로운 기능 (6개 도구)
+- `link_memories`: 메모리 간 관계 설정 (지식 그래프)
+- `get_memory_graph`: 지식 그래프 조회 (Mermaid 지원)
+- `search_memories_advanced`: 멀티 전략 검색 (5가지)
+- `create_memory_timeline`: 타임라인 생성
+- `analyze_dependency_graph`: 코드 의존성 분석
+- `get_usage_analytics`: 사용 분석
+
+### 🗑️ 삭제된 도구 (8개)
+- search_memories, auto_save_context, restore_session_context, start_session
+- break_down_problem, think_aloud_process, monitor_console_logs, inspect_network_requests
+
+### 🏗️ 아키텍처 개선
+- 37개 switch case → 동적 디스패치 패턴
+- MemoryManager 확장: 395줄 → 823줄 (+428줄)
+- 지식 그래프 테이블 추가 (memory_relations)
+
+---
+
 ## [1.3.0] - 2025-01-16
 
 ### ✨ 새로운 기능

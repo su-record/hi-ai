@@ -1,6 +1,6 @@
 name: "@su-record/hi-ai"
-description: "AI 어렵지 않아! '하이아이' - 지식 그래프 기반 34개 도구의 완벽한 AI 개발 킷"
-version: "2.0.0"
+description: "AI 어렵지 않아! '하이아이' - 지식 그래프 기반 35개 도구의 완벽한 AI 개발 킷 (세션 컨텍스트 자동 주입)"
+version: "2.1.0"
 author: "Su"
 license: "MIT"
 categories:

@@ -5,7 +5,11 @@ import { ToolResult, ToolDefinition } from '../../types/tool.js';
 
 export const saveMemoryDefinition: ToolDefinition = {
   name: 'save_memory',
-  description: '기억해|remember|저장해|save|memorize|keep - Save to long-term memory',
+  description: `중요한 정보를 장기 메모리에 저장합니다. 프로젝트 결정사항, 아키텍처, 설정 등을 기록하세요.
+
+키워드: 기억해, remember, 저장해, save, memorize, keep
+
+💡 저장 후 link_memories로 관련 메모리를 연결하면 지식 그래프가 구축됩니다.`,
   inputSchema: {
     type: 'object',
     properties: {

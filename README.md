@@ -11,7 +11,7 @@
 
 **Model Context Protocol 기반 AI 개발 어시스턴트**
 
-TypeScript + Python 지원 · 34개 전문 도구 · 지식 그래프 메모리 · 코드 의존성 분석
+TypeScript + Python 지원 · 35개 전문 도구 · 지식 그래프 메모리 · 세션 컨텍스트 자동 주입
 
 <a href="https://glama.ai/mcp/servers/@su-record/hi-ai">
   <img width="380" height="200" src="https://glama.ai/mcp/servers/@su-record/hi-ai/badge" alt="Hi-AI MCP server" />
@@ -27,7 +27,7 @@ TypeScript + Python 지원 · 34개 전문 도구 · 지식 그래프 메모리 
 
 - [개요](#개요)
 - [주요 기능](#주요-기능)
-- [v2.0.0 업데이트](#v200-업데이트)
+- [v2.1.0 업데이트](#v210-업데이트)
 - [설치](#설치)
 - [도구 카탈로그](#도구-카탈로그)
 - [아키텍처](#아키텍처)
@@ -39,7 +39,7 @@ TypeScript + Python 지원 · 34개 전문 도구 · 지식 그래프 메모리 
 
 ## 개요
 
-Hi-AI는 **Model Context Protocol (MCP)** 표준을 구현한 AI 개발 어시스턴트입니다. 자연어 기반 키워드 인식을 통해 34개의 전문화된 도구를 제공하며, 개발자가 복잡한 작업을 직관적으로 수행할 수 있도록 돕습니다.
+Hi-AI는 **Model Context Protocol (MCP)** 표준을 구현한 AI 개발 어시스턴트입니다. 자연어 기반 키워드 인식을 통해 35개의 전문화된 도구를 제공하며, 개발자가 복잡한 작업을 직관적으로 수행할 수 있도록 돕습니다.
 
 ### 핵심 가치
 
@@ -53,22 +53,24 @@ Hi-AI는 **Model Context Protocol (MCP)** 표준을 구현한 AI 개발 어시�
 
 ## 주요 기능
 
-### 1. 지식 그래프 메모리 시스템 (v2.0 신규)
+### 1. 지식 그래프 메모리 시스템
 
-메모리 간 관계를 그래프로 구성하여 연관 정보를 탐색하는 10개의 도구:
+메모리 간 관계를 그래프로 구성하여 연관 정보를 탐색하는 11개의 도구:
 
+- **세션 컨텍스트 자동 주입**: 세션 시작 시 이전 메모리와 지식 그래프를 자동으로 로드 (v2.1 신규)
 - **관계 연결**: 메모리 간 의미론적 관계 설정 (related_to, depends_on, implements 등)
 - **그래프 탐색**: BFS/DFS 알고리즘을 통한 연관 메모리 탐색
 - **멀티 전략 검색**: 5가지 검색 전략 지원 (keyword, graph_traversal, temporal, priority, context_aware)
 - **타임라인**: 시간순 메모리 히스토리 시각화
 
 **주요 도구**:
+- `get_session_context` - 🚀 세션 시작 시 컨텍스트 자동 로드 (v2.1 신규)
 - `save_memory` - 장기 메모리에 정보 저장
 - `recall_memory` - 저장된 정보 검색
-- `link_memories` - 메모리 간 관계 연결 (v2.0 신규)
-- `get_memory_graph` - 지식 그래프 조회 (v2.0 신규)
-- `search_memories_advanced` - 멀티 전략 검색 (v2.0 신규)
-- `create_memory_timeline` - 타임라인 생성 (v2.0 신규)
+- `link_memories` - 메모리 간 관계 연결
+- `get_memory_graph` - 지식 그래프 조회
+- `search_memories_advanced` - 멀티 전략 검색
+- `create_memory_timeline` - 타임라인 생성
 - `prioritize_memory` - 메모리 우선순위 관리
 
 ### 2. 시맨틱 코드 분석
@@ -235,6 +237,30 @@ User: "배포가 실패했어"
 
 ---
 
+## v2.1.0 업데이트
+
+### 주요 변경사항
+
+Hi-AI v2.1.0은 **세션 컨텍스트 자동 주입** 기능을 도입한 마이너 릴리스입니다.
+
+### 신규 기능
+
+| 기능 | 설명 |
+|------|------|
+| `get_session_context` 도구 | 세션 시작 시 이전 메모리, 지식 그래프, 타임라인을 한 번에 조회 |
+| `hi-ai://context/session` 리소스 | 클라이언트가 리소스를 읽을 때 자동으로 컨텍스트 제공 |
+| 도구 description 개선 | LLM이 세션 시작 시 자동으로 컨텍스트를 파악하도록 유도 |
+
+### 변경 요약
+
+| 항목 | v2.0.0 | v2.1.0 | 변화 |
+|------|--------|--------|------|
+| 도구 개수 | 34개 | 35개 | +1개 |
+| 리소스 개수 | 3개 | 4개 | +1개 |
+| 세션 컨텍스트 | 수동 | 자동 권장 | 개선 |
+
+---
+
 ## v2.0.0 업데이트
 
 ### 주요 변경사항
@@ -257,29 +283,6 @@ Hi-AI v2.0.0은 지식 그래프 기반 메모리 시스템과 고급 코드 분
 - **index.ts**: 37개 switch case → 동적 디스패치 패턴
 - **MemoryManager**: 지식 그래프 기능 추가 (395줄 → 823줄)
 - **코드 최적화**: 불필요한 의존성 제거 (puppeteer-core)
-
-### 삭제된 도구
-
-| 도구 | 이유 |
-|------|------|
-| `search_memories` | search_memories_advanced로 대체 |
-| `auto_save_context` | save_memory에 통합 |
-| `restore_session_context` | recall_memory에 통합 |
-| `start_session` | save_memory에 통합 |
-| `break_down_problem` | analyze_problem에 통합 |
-| `think_aloud_process` | step_by_step_analysis와 중복 |
-| `monitor_console_logs` | 낮은 사용률 |
-| `inspect_network_requests` | 낮은 사용률 |
-
-### 변경 요약
-
-| 항목 | v1.4.0 | v2.0.0 | 변화 |
-|------|--------|--------|------|
-| 도구 개수 | 37개 | 34개 | -3개 |
-| MemoryManager | 395줄 | 823줄 | +428줄 |
-| 검색 전략 | 1가지 | 5가지 | +400% |
-| 그래프 탐색 | 없음 | BFS/DFS | 신규 |
-| 의존성 분석 | 없음 | 순환 감지 | 신규 |
 
 ---
 
@@ -331,12 +334,13 @@ Claude Desktop 또는 다른 MCP 클라이언트의 설정 파일에 추가:
 
 ## 도구 카탈로그
 
-### 전체 도구 목록 (34개)
+### 전체 도구 목록 (35개)
 
 | 카테고리 | 도구 수 | 도구 목록 |
 |----------|---------|-----------|
 | **메모리 - 기본** | 6 | save_memory, recall_memory, list_memories, delete_memory, update_memory, prioritize_memory |
 | **메모리 - 그래프** | 4 | link_memories, get_memory_graph, search_memories_advanced, create_memory_timeline |
+| **메모리 - 세션** | 1 | get_session_context 🚀 |
 | **코드 분석** | 3 | find_symbol, find_references, analyze_dependency_graph |
 | **사고** | 4 | create_thinking_chain, analyze_problem, step_by_step_analysis, format_as_plan |
 | **코드 품질** | 6 | analyze_complexity, validate_code_quality, check_coupling_cohesion, suggest_improvements, apply_quality_rules, get_coding_guide |
@@ -355,6 +359,7 @@ Claude Desktop 또는 다른 MCP 클라이언트의 설정 파일에 추가:
 |------|--------|------|
 | save_memory | 기억해, 저장해 | remember, save this |
 | recall_memory | 떠올려, 기억나 | recall, remind me |
+| get_session_context | 세션 시작, 컨텍스트 | session start, context |
 | link_memories | 연결해, 관계 | link, connect |
 | get_memory_graph | 그래프, 관계도 | graph, relations |
 | search_memories_advanced | 고급 검색, 찾아 | advanced search, find |
@@ -381,7 +386,7 @@ graph TB
     end
 
     subgraph "MCP Server"
-        B[Hi-AI v2.0.0]
+        B[Hi-AI v2.1.0]
     end
 
     subgraph "Core Libraries"
@@ -394,6 +399,7 @@ graph TB
     subgraph "Tool Categories"
         D1[Memory Basic x6]
         D2[Memory Graph x4]
+        D2b[Memory Session x1]
         D3[Code Analysis x3]
         D4[Thinking Tools x4]
         D5[Quality Tools x6]
@@ -411,7 +417,7 @@ graph TB
 
     A <--> B
     B --> C1 & C2 & C3 & C4
-    B --> D1 & D2 & D3 & D4 & D5 & D6 & D7 & D8 & D9 & D10
+    B --> D1 & D2 & D2b & D3 & D4 & D5 & D6 & D7 & D8 & D9 & D10
     C1 --> E1
     C3 --> E2
     C4 --> E2
@@ -571,11 +577,11 @@ MIT License - 자유롭게 사용, 수정, 배포 가능
 이 프로젝트를 연구나 상업적 용도로 사용하실 경우:
 
 ```bibtex
-@software{hi-ai2024,
+@software{hi-ai2025,
   author = {Su},
   title = {Hi-AI: Knowledge Graph-Based MCP Server for AI-Assisted Development},
-  year = {2024},
-  version = {2.0.0},
+  year = {2025},
+  version = {2.1.0},
   url = {https://github.com/su-record/hi-ai}
 }
 ```
@@ -590,9 +596,9 @@ MIT License - 자유롭게 사용, 수정, 배포 가능
 
 <br>
 
-**Hi-AI v2.0.0**
+**Hi-AI v2.1.0**
 
-지식 그래프 메모리 · 멀티 전략 검색 · 의존성 분석 · 34개 전문 도구
+지식 그래프 메모리 · 세션 컨텍스트 자동 주입 · 의존성 분석 · 35개 전문 도구
 
 Made with ❤️ by [Su](https://github.com/su-record)
 
