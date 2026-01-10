@@ -1,6 +1,6 @@
 {
   "name": "@su-record/hi-ai",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "Model Context Protocol based AI development assistant with 35 specialized tools featuring Knowledge Graph memory, session context auto-injection, and code dependency analysis",
   "displayName": "Hi-AI",
   "icon": "https://raw.githubusercontent.com/su-record/hi-ai/main/icon.png",
