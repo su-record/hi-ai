@@ -37,6 +37,10 @@ export const linkMemoriesDefinition: ToolDefinition = {
       bidirectional: {
         type: 'boolean',
         description: '양방향 관계 여부 (기본값: false)'
+      },
+      projectPath: {
+        type: 'string',
+        description: 'Project directory path for project-specific memory'
       }
     },
     required: ['sourceKey', 'targetKey', 'relationType']
@@ -57,12 +61,13 @@ interface LinkMemoriesArgs {
   relationType: string;
   strength?: number;
   bidirectional?: boolean;
+  projectPath?: string;
 }
 
 export async function linkMemories(args: LinkMemoriesArgs): Promise<ToolResult> {
   try {
-    const { sourceKey, targetKey, relationType, strength = 1.0, bidirectional = false } = args;
-    const memoryManager = MemoryManager.getInstance();
+    const { sourceKey, targetKey, relationType, strength = 1.0, bidirectional = false, projectPath } = args;
+    const memoryManager = MemoryManager.getInstance(projectPath);
 
     // Verify both memories exist
     const sourceMemory = memoryManager.recall(sourceKey);

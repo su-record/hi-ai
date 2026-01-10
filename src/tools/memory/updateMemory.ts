@@ -11,7 +11,8 @@ export const updateMemoryDefinition: ToolDefinition = {
     properties: {
       key: { type: 'string', description: 'Memory key to update' },
       value: { type: 'string', description: 'New value' },
-      append: { type: 'boolean', description: 'Append to existing value' }
+      append: { type: 'boolean', description: 'Append to existing value' },
+      projectPath: { type: 'string', description: 'Project directory path for project-specific memory' }
     },
     required: ['key', 'value']
   },
@@ -25,11 +26,11 @@ export const updateMemoryDefinition: ToolDefinition = {
   }
 };
 
-export async function updateMemory(args: { key: string; value: string; append?: boolean }): Promise<ToolResult> {
-  const { key: updateKey, value: updateValue, append = false } = args;
+export async function updateMemory(args: { key: string; value: string; append?: boolean; projectPath?: string }): Promise<ToolResult> {
+  const { key: updateKey, value: updateValue, append = false, projectPath } = args;
 
   try {
-    const mm = MemoryManager.getInstance();
+    const mm = MemoryManager.getInstance(projectPath);
     const existingMemory = mm.recall(updateKey);
 
     if (existingMemory) {

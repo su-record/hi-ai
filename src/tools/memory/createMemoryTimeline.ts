@@ -35,6 +35,10 @@ export const createMemoryTimelineDefinition: ToolDefinition = {
         type: 'string',
         description: '그룹화 기준',
         enum: ['day', 'week', 'month', 'category']
+      },
+      projectPath: {
+        type: 'string',
+        description: 'Project directory path for project-specific memory'
       }
     }
   },
@@ -54,6 +58,7 @@ interface CreateMemoryTimelineArgs {
   category?: string;
   limit?: number;
   groupBy?: 'day' | 'week' | 'month' | 'category';
+  projectPath?: string;
 }
 
 export async function createMemoryTimeline(args: CreateMemoryTimelineArgs): Promise<ToolResult> {
@@ -63,10 +68,11 @@ export async function createMemoryTimeline(args: CreateMemoryTimelineArgs): Prom
       endDate,
       category,
       limit = 20,
-      groupBy = 'day'
+      groupBy = 'day',
+      projectPath
     } = args;
 
-    const memoryManager = MemoryManager.getInstance();
+    const memoryManager = MemoryManager.getInstance(projectPath);
     let memories = memoryManager.getTimeline(startDate, endDate, limit);
 
     // Filter by category if specified

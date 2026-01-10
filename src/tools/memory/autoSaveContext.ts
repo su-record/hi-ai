@@ -15,7 +15,8 @@ export const autoSaveContextDefinition: ToolDefinition = {
       sessionId: { type: 'string', description: 'Current session identifier' },
       summary: { type: 'string', description: 'Brief summary of current context' },
       fullContext: { type: 'string', description: 'Full context to compress and save' },
-      compress: { type: 'boolean', description: 'Enable smart compression (default: true)' }
+      compress: { type: 'boolean', description: 'Enable smart compression (default: true)' },
+      projectPath: { type: 'string', description: 'Project directory path for project-specific memory' }
     },
     required: ['urgency', 'contextType']
   },
@@ -36,11 +37,12 @@ export async function autoSaveContext(args: {
   summary?: string;
   fullContext?: string;
   compress?: boolean;
+  projectPath?: string;
 }): Promise<ToolResult> {
-  const { urgency, contextType, sessionId, summary, fullContext, compress = true } = args;
+  const { urgency, contextType, sessionId, summary, fullContext, compress = true, projectPath } = args;
 
   try {
-    const memoryManager = MemoryManager.getInstance();
+    const memoryManager = MemoryManager.getInstance(projectPath);
 
     let contextToSave = summary || '';
     let compressionStats = null;

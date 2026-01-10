@@ -45,7 +45,8 @@ export const startSessionDefinition: ToolDefinition = {
       greeting: { type: 'string', description: 'Greeting message that triggered this action (e.g., "하이아이", "hi-ai")' },
       loadMemory: { type: 'boolean', description: 'Load relevant project memories (default: true)' },
       loadGuides: { type: 'boolean', description: 'Load applicable coding guides (default: true)' },
-      restoreContext: { type: 'boolean', description: 'Restore previous session context (default: true)' }
+      restoreContext: { type: 'boolean', description: 'Restore previous session context (default: true)' },
+      projectPath: { type: 'string', description: 'Project directory path for project-specific memory' }
     },
     required: []
   },
@@ -59,11 +60,11 @@ export const startSessionDefinition: ToolDefinition = {
   }
 };
 
-export async function startSession(args: { greeting?: string; loadMemory?: boolean; loadGuides?: boolean; restoreContext?: boolean }): Promise<ToolResult> {
-  const { greeting = '', loadMemory = true, loadGuides: shouldLoadGuides = true, restoreContext = true } = args;
+export async function startSession(args: { greeting?: string; loadMemory?: boolean; loadGuides?: boolean; restoreContext?: boolean; projectPath?: string }): Promise<ToolResult> {
+  const { greeting = '', loadMemory = true, loadGuides: shouldLoadGuides = true, restoreContext = true, projectPath } = args;
 
   try {
-    const memoryManager = MemoryManager.getInstance();
+    const memoryManager = MemoryManager.getInstance(projectPath);
     let summary = `${greeting ? greeting + '! ' : ''}Session started.\n`;
 
     // Load relevant project memories

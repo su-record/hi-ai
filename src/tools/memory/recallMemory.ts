@@ -14,7 +14,8 @@ export const recallMemoryDefinition: ToolDefinition = {
     type: 'object',
     properties: {
       key: { type: 'string', description: 'Memory key to retrieve' },
-      category: { type: 'string', description: 'Memory category to search in' }
+      category: { type: 'string', description: 'Memory category to search in' },
+      projectPath: { type: 'string', description: 'Project directory path for project-specific memory' }
     },
     required: ['key']
   },
@@ -28,11 +29,11 @@ export const recallMemoryDefinition: ToolDefinition = {
   }
 };
 
-export async function recallMemory(args: { key: string; category?: string }): Promise<ToolResult> {
-  const { key: recallKey } = args;
+export async function recallMemory(args: { key: string; category?: string; projectPath?: string }): Promise<ToolResult> {
+  const { key: recallKey, projectPath } = args;
 
   try {
-    const memoryManager = MemoryManager.getInstance();
+    const memoryManager = MemoryManager.getInstance(projectPath);
     const memory = memoryManager.recall(recallKey);
 
     if (memory) {

@@ -9,7 +9,8 @@ export const deleteMemoryDefinition: ToolDefinition = {
   inputSchema: {
     type: 'object',
     properties: {
-      key: { type: 'string', description: 'Memory key to delete' }
+      key: { type: 'string', description: 'Memory key to delete' },
+      projectPath: { type: 'string', description: 'Project directory path for project-specific memory' }
     },
     required: ['key']
   },
@@ -23,11 +24,11 @@ export const deleteMemoryDefinition: ToolDefinition = {
   }
 };
 
-export async function deleteMemory(args: { key: string }): Promise<ToolResult> {
-  const { key: deleteKey } = args;
+export async function deleteMemory(args: { key: string; projectPath?: string }): Promise<ToolResult> {
+  const { key: deleteKey, projectPath } = args;
 
   try {
-    const mm = MemoryManager.getInstance();
+    const mm = MemoryManager.getInstance(projectPath);
     const deleted = mm.delete(deleteKey);
 
     if (deleted) {

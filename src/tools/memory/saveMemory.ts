@@ -15,7 +15,8 @@ export const saveMemoryDefinition: ToolDefinition = {
     properties: {
       key: { type: 'string', description: 'Memory key/identifier' },
       value: { type: 'string', description: 'Information to save' },
-      category: { type: 'string', description: 'Memory category', enum: ['project', 'personal', 'code', 'notes'] }
+      category: { type: 'string', description: 'Memory category', enum: ['project', 'personal', 'code', 'notes'] },
+      projectPath: { type: 'string', description: 'Project directory path for project-specific memory storage' }
     },
     required: ['key', 'value']
   },
@@ -29,15 +30,16 @@ export const saveMemoryDefinition: ToolDefinition = {
   }
 };
 
-export async function saveMemory(args: { key: string; value: string; category?: string }): Promise<ToolResult> {
-  const { key: memoryKey, value: memoryValue, category = 'general' } = args;
+export async function saveMemory(args: { key: string; value: string; category?: string; projectPath?: string }): Promise<ToolResult> {
+  const { key: memoryKey, value: memoryValue, category = 'general', projectPath } = args;
 
   try {
-    const memoryManager = MemoryManager.getInstance();
+    const memoryManager = MemoryManager.getInstance(projectPath);
     memoryManager.save(memoryKey, memoryValue, category);
 
+    const location = projectPath ? `${projectPath}/memories/` : 'default';
     return {
-      content: [{ type: 'text', text: `✓ Saved: ${memoryKey}\nCategory: ${category}` }]
+      content: [{ type: 'text', text: `✓ Saved: ${memoryKey}\nCategory: ${category}\nLocation: ${location}` }]
     };
   } catch (error) {
     return {

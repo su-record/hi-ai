@@ -33,6 +33,10 @@ export const getMemoryGraphDefinition: ToolDefinition = {
         type: 'string',
         description: '출력 형식',
         enum: ['tree', 'list', 'mermaid']
+      },
+      projectPath: {
+        type: 'string',
+        description: 'Project directory path for project-specific memory'
       }
     }
   },
@@ -51,12 +55,13 @@ interface GetMemoryGraphArgs {
   depth?: number;
   relationType?: string;
   format?: 'tree' | 'list' | 'mermaid';
+  projectPath?: string;
 }
 
 export async function getMemoryGraph(args: GetMemoryGraphArgs): Promise<ToolResult> {
   try {
-    const { key, depth = 2, relationType, format = 'tree' } = args;
-    const memoryManager = MemoryManager.getInstance();
+    const { key, depth = 2, relationType, format = 'tree', projectPath } = args;
+    const memoryManager = MemoryManager.getInstance(projectPath);
 
     const graph = memoryManager.getMemoryGraph(key, depth);
 

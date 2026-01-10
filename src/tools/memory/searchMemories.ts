@@ -10,7 +10,8 @@ export const searchMemoriesDefinition: ToolDefinition = {
     type: 'object',
     properties: {
       query: { type: 'string', description: 'Search query' },
-      category: { type: 'string', description: 'Category to search in' }
+      category: { type: 'string', description: 'Category to search in' },
+      projectPath: { type: 'string', description: 'Project directory path for project-specific memory' }
     },
     required: ['query']
   },
@@ -24,11 +25,11 @@ export const searchMemoriesDefinition: ToolDefinition = {
   }
 };
 
-export async function searchMemoriesHandler(args: { query: string; category?: string }): Promise<ToolResult> {
-  const { query, category: searchCategory } = args;
+export async function searchMemoriesHandler(args: { query: string; category?: string; projectPath?: string }): Promise<ToolResult> {
+  const { query, projectPath } = args;
 
   try {
-    const mm = MemoryManager.getInstance();
+    const mm = MemoryManager.getInstance(projectPath);
     const results = mm.search(query);
 
     const resultList = results.map(m =>

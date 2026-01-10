@@ -3,7 +3,7 @@
 
 import Database from 'better-sqlite3';
 import path from 'path';
-import { promises as fs } from 'fs';
+import { mkdirSync, readFileSync, renameSync } from 'fs';
 import { MemoryRelation, MemoryGraph, MemoryGraphNode } from '../types/tool.js';
 
 export interface MemoryItem {
@@ -17,6 +17,9 @@ export interface MemoryItem {
 
 export class MemoryManager {
   private db: Database.Database;
+  // Map of projectPath -> MemoryManager instance (for project-based memory)
+  private static instances: Map<string, MemoryManager> = new Map();
+  // Legacy single instance (for backward compatibility)
   private static instance: MemoryManager | null = null;
   private readonly dbPath: string;
   private recallStmt: Database.Statement | null = null;
@@ -24,16 +27,27 @@ export class MemoryManager {
   private recallSelectStmt: Database.Statement | null = null;
   private recallUpdateStmt: Database.Statement | null = null;
 
-  private constructor(customDbPath?: string) {
-    if (customDbPath) {
-      this.dbPath = customDbPath;
+  private constructor(projectPath?: string) {
+    if (projectPath) {
+      // Project-based memory: store in {projectPath}/memories/
+      const memoryDir = path.join(projectPath, 'memories');
+      this.dbPath = path.join(memoryDir, 'memories.db');
+
+      try {
+        mkdirSync(memoryDir, { recursive: true });
+      } catch (error) {
+        const nodeError = error as NodeJS.ErrnoException;
+        if (nodeError.code !== 'EEXIST') {
+          throw new Error(`Failed to create memory directory: ${nodeError.message}`);
+        }
+      }
     } else {
+      // Fallback to process.cwd() (legacy behavior)
       const memoryDir = path.join(process.cwd(), 'memories');
       this.dbPath = path.join(memoryDir, 'memories.db');
 
-      // Ensure directory exists synchronously (needed for DB init)
       try {
-        require('fs').mkdirSync(memoryDir, { recursive: true });
+        mkdirSync(memoryDir, { recursive: true });
       } catch (error) {
         const nodeError = error as NodeJS.ErrnoException;
         if (nodeError.code !== 'EEXIST') {
@@ -45,17 +59,31 @@ export class MemoryManager {
     this.db = new Database(this.dbPath);
     this.initializeDatabase();
 
-    // Only migrate if using default path (not for tests)
-    if (!customDbPath) {
-      this.migrateFromJSON();
-    }
+    // Migrate from JSON if exists
+    this.migrateFromJSON();
   }
 
   private static cleanupRegistered = false;
 
-  public static getInstance(customDbPath?: string): MemoryManager {
+  /**
+   * Get MemoryManager instance for a specific project
+   * @param projectPath - Project directory path (if not provided, uses process.cwd())
+   */
+  public static getInstance(projectPath?: string): MemoryManager {
+    // If projectPath provided, use project-based instances
+    if (projectPath) {
+      const normalizedPath = path.resolve(projectPath);
+
+      if (!MemoryManager.instances.has(normalizedPath)) {
+        MemoryManager.instances.set(normalizedPath, new MemoryManager(normalizedPath));
+      }
+
+      return MemoryManager.instances.get(normalizedPath)!;
+    }
+
+    // Legacy behavior: single global instance
     if (!MemoryManager.instance) {
-      MemoryManager.instance = new MemoryManager(customDbPath);
+      MemoryManager.instance = new MemoryManager();
 
       // Register cleanup handlers only once
       if (!MemoryManager.cleanupRegistered) {
@@ -66,9 +94,15 @@ export class MemoryManager {
 
         // Register cleanup on process exit to prevent memory leaks
         const cleanup = () => {
+          // Close legacy instance
           if (MemoryManager.instance) {
             MemoryManager.instance.close();
           }
+          // Close all project-based instances
+          for (const instance of MemoryManager.instances.values()) {
+            instance.close();
+          }
+          MemoryManager.instances.clear();
         };
 
         process.on('exit', cleanup);
@@ -175,7 +209,7 @@ export class MemoryManager {
    */
   private loadJSONMemories(jsonPath: string): MemoryItem[] {
     try {
-      const jsonData = require('fs').readFileSync(jsonPath, 'utf-8');
+      const jsonData = readFileSync(jsonPath, 'utf-8');
       return JSON.parse(jsonData);
     } catch (error) {
       return [];
@@ -210,9 +244,9 @@ export class MemoryManager {
   /**
    * Backup JSON file and log migration
    */
-  private backupAndCleanup(jsonPath: string, count: number): void {
+  private backupAndCleanup(jsonPath: string, _count: number): void {
     try {
-      require('fs').renameSync(jsonPath, `${jsonPath}.backup`);
+      renameSync(jsonPath, `${jsonPath}.backup`);
       // Migration successful - could add logger here
     } catch (error) {
       // Backup failed but migration completed
@@ -808,16 +842,39 @@ export class MemoryManager {
   public close(): void {
     if (this.db) {
       this.db.close();
-      MemoryManager.instance = null;
     }
   }
 
   /**
-   * Reset singleton instance (useful for testing and cleanup)
+   * Reset all instances (useful for testing and cleanup)
+   * @param projectPath - If provided, only reset that project's instance
    */
-  public static resetInstance(): void {
-    if (MemoryManager.instance) {
-      MemoryManager.instance.close();
+  public static resetInstance(projectPath?: string): void {
+    if (projectPath) {
+      const normalizedPath = path.resolve(projectPath);
+      const instance = MemoryManager.instances.get(normalizedPath);
+      if (instance) {
+        instance.close();
+        MemoryManager.instances.delete(normalizedPath);
+      }
+    } else {
+      // Reset legacy instance
+      if (MemoryManager.instance) {
+        MemoryManager.instance.close();
+        MemoryManager.instance = null;
+      }
+      // Reset all project instances
+      for (const instance of MemoryManager.instances.values()) {
+        instance.close();
+      }
+      MemoryManager.instances.clear();
     }
+  }
+
+  /**
+   * Get the database path for this instance
+   */
+  public getDbPath(): string {
+    return this.dbPath;
   }
 }

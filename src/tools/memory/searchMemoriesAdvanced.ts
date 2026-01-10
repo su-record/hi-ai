@@ -50,6 +50,10 @@ export const searchMemoriesAdvancedDefinition: ToolDefinition = {
       includeRelations: {
         type: 'boolean',
         description: '관계 정보 포함 여부'
+      },
+      projectPath: {
+        type: 'string',
+        description: 'Project directory path for project-specific memory'
       }
     },
     required: ['query']
@@ -72,6 +76,7 @@ interface SearchMemoriesAdvancedArgs {
   startKey?: string;
   depth?: number;
   includeRelations?: boolean;
+  projectPath?: string;
 }
 
 export async function searchMemoriesAdvanced(args: SearchMemoriesAdvancedArgs): Promise<ToolResult> {
@@ -83,10 +88,11 @@ export async function searchMemoriesAdvanced(args: SearchMemoriesAdvancedArgs): 
       category,
       startKey,
       depth = 2,
-      includeRelations = false
+      includeRelations = false,
+      projectPath
     } = args;
 
-    const memoryManager = MemoryManager.getInstance();
+    const memoryManager = MemoryManager.getInstance(projectPath);
 
     const results = memoryManager.searchAdvanced(query, strategy, {
       limit,

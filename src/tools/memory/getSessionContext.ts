@@ -47,6 +47,10 @@ export const getSessionContextDefinition: ToolDefinition = {
         description: '타임라인 조회 범위',
         enum: ['1d', '7d', '30d', 'all'],
         default: '7d'
+      },
+      projectPath: {
+        type: 'string',
+        description: 'Project directory path for project-specific memory'
       }
     }
   },
@@ -67,6 +71,7 @@ interface GetSessionContextArgs {
   includeGraph?: boolean;
   includeTimeline?: boolean;
   timeRange?: '1d' | '7d' | '30d' | 'all';
+  projectPath?: string;
 }
 
 export async function getSessionContext(args: GetSessionContextArgs): Promise<ToolResult> {
@@ -77,10 +82,11 @@ export async function getSessionContext(args: GetSessionContextArgs): Promise<To
       memoryLimit = 15,
       includeGraph = true,
       includeTimeline = true,
-      timeRange = '7d'
+      timeRange = '7d',
+      projectPath
     } = args;
 
-    const memoryManager = MemoryManager.getInstance();
+    const memoryManager = MemoryManager.getInstance(projectPath);
     const sections: string[] = [];
 
     // Header

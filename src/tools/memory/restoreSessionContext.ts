@@ -11,7 +11,8 @@ export const restoreSessionContextDefinition: ToolDefinition = {
     properties: {
       sessionId: { type: 'string', description: 'Session ID to restore' },
       restoreLevel: { type: 'string', description: 'Level of detail to restore', enum: ['essential', 'detailed', 'complete'] },
-      filterType: { type: 'string', description: 'Filter context by type', enum: ['all', 'progress', 'decisions', 'code-snippets', 'debugging', 'planning'] }
+      filterType: { type: 'string', description: 'Filter context by type', enum: ['all', 'progress', 'decisions', 'code-snippets', 'debugging', 'planning'] },
+      projectPath: { type: 'string', description: 'Project directory path for project-specific memory' }
     },
     required: ['sessionId']
   },
@@ -25,11 +26,11 @@ export const restoreSessionContextDefinition: ToolDefinition = {
   }
 };
 
-export async function restoreSessionContext(args: { sessionId: string; restoreLevel?: string; filterType?: string }): Promise<ToolResult> {
-  const { sessionId, restoreLevel = 'detailed', filterType = 'all' } = args;
+export async function restoreSessionContext(args: { sessionId: string; restoreLevel?: string; filterType?: string; projectPath?: string }): Promise<ToolResult> {
+  const { sessionId, restoreLevel = 'detailed', filterType = 'all', projectPath } = args;
 
   try {
-    const memoryManager = MemoryManager.getInstance();
+    const memoryManager = MemoryManager.getInstance(projectPath);
 
     // Get all context memories
     let memories = memoryManager.list('context');

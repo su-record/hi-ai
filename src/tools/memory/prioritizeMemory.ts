@@ -13,7 +13,8 @@ export const prioritizeMemoryDefinition: ToolDefinition = {
       criticalDecisions: { type: 'array', items: { type: 'string' }, description: 'List of critical decisions made' },
       codeChanges: { type: 'array', items: { type: 'string' }, description: 'Important code changes' },
       blockers: { type: 'array', items: { type: 'string' }, description: 'Current blockers or issues' },
-      nextSteps: { type: 'array', items: { type: 'string' }, description: 'Planned next steps' }
+      nextSteps: { type: 'array', items: { type: 'string' }, description: 'Planned next steps' },
+      projectPath: { type: 'string', description: 'Project directory path for project-specific memory' }
     },
     required: ['currentTask']
   },
@@ -32,12 +33,13 @@ export async function prioritizeMemory(args: {
   criticalDecisions?: string[];
   codeChanges?: string[];
   blockers?: string[];
-  nextSteps?: string[]
+  nextSteps?: string[];
+  projectPath?: string;
 }): Promise<ToolResult> {
-  const { currentTask, criticalDecisions = [], codeChanges = [], blockers = [], nextSteps = [] } = args;
+  const { currentTask, criticalDecisions = [], codeChanges = [], blockers = [], nextSteps = [], projectPath } = args;
 
   try {
-    const mm = MemoryManager.getInstance();
+    const mm = MemoryManager.getInstance(projectPath);
     const allMemories = mm.list();
     const prioritizedMemories: Array<{ memory: MemoryItem; priority: number; reason: string }> = [];
 

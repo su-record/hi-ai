@@ -14,7 +14,8 @@ export const listMemoriesDefinition: ToolDefinition = {
     type: 'object',
     properties: {
       category: { type: 'string', description: 'Filter by category' },
-      limit: { type: 'number', description: 'Maximum number of results' }
+      limit: { type: 'number', description: 'Maximum number of results' },
+      projectPath: { type: 'string', description: 'Project directory path for project-specific memory' }
     },
     required: []
   },
@@ -28,11 +29,11 @@ export const listMemoriesDefinition: ToolDefinition = {
   }
 };
 
-export async function listMemories(args: { category?: string; limit?: number }): Promise<ToolResult> {
-  const { category: listCategory, limit = 10 } = args;
+export async function listMemories(args: { category?: string; limit?: number; projectPath?: string }): Promise<ToolResult> {
+  const { category: listCategory, limit = 10, projectPath } = args;
 
   try {
-    const mm = MemoryManager.getInstance();
+    const mm = MemoryManager.getInstance(projectPath);
     const allMemories = mm.list(listCategory);
     const limitedMemories = allMemories.slice(0, limit);
 
